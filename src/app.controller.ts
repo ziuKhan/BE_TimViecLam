@@ -8,6 +8,7 @@ export class AppController {
   @Get()
   @Render('home.ejs')
   getHello() {
-    // return 'this.appService.getHello()';
+    const name1 = this.appService.getHello();
+    return { name: name1 };
   }
 }
