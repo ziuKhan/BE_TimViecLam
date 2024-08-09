@@ -15,10 +15,12 @@ export class UsersService {
     return bcrypt.hash(password, 10);
   }
 
-  async create(email: string, password: string, name: string) {
+  async create(createUserDt: CreateUserDto) {
     //call hash password
-    password = await this.hashPassword(password);
-    let user = await this.UserModel.create({ email, password, name });
+    createUserDt.password = await this.hashPassword(createUserDt.password);
+
+    //create a new user
+    let user = await this.UserModel.create(createUserDt);
     return user;
   }
 

@@ -18,13 +18,10 @@ export class UsersController {
   @Post()
   create(
     //tag @Body là request.body trong NestJS
-
-    @Body('email') email: string,
-    @Body('password') password: string,
-    @Body('name') name: string,
+    //cách khai báo: @Body() (tên biến): (kiểu dữ liệu),
+    @Body() createUserDto: CreateUserDto, //kiểu dữ liệu là 1 class,
   ) {
-
-    return this.usersService.create(email, password, name);
+    return this.usersService.create(createUserDto);
   }
 
   @Get()
