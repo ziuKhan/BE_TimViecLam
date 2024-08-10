@@ -11,8 +11,13 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   app.useGlobalPipes(new ValidationPipe());
   const reflector = app.get(Reflector);
-  app.useGlobalGuards(new JwtAuthGuard(reflector));
+  // app.useGlobalGuards(new JwtAuthGuard(reflector));
 
+  app.enableCors({
+    origin: 'http://localhost:3003', //để * là cho tất cả kết nối tới còn để localhost thì chỉ local ý dùng
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    preflightContinue: false,
+  });
   await app.listen(configService.get<string>('PORT'));
 }
 bootstrap();

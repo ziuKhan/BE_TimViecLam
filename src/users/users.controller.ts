@@ -29,7 +29,7 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  @Get('by=:id')
+  @Get(':id')
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(id); //dấu + là đang chuyển string sang number nhưng ko cần vì muốn giữ string
   }
