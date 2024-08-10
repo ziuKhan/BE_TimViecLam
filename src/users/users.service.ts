@@ -1,14 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from './schemas/user.schema';
+import { User, UserDocument } from './schemas/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
+import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private UserModel: Model<User>) {}
+  constructor(
+    @InjectModel(User.name) private UserModel: SoftDeleteModel<UserDocument>,
+  ) {}
 
   // hash password
   hashPassword(password: string) {
@@ -52,6 +55,6 @@ export class UsersService {
   remove(id: string) {
     if (!mongoose.Types.ObjectId.isValid(id)) return 'Không tồn tại ID';
 
-    return this.UserModel.deleteOne({ _id: id });
+    return this.UserModel.softDelete({ _id: id });
   }
 }
