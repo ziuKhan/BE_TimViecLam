@@ -46,7 +46,7 @@ export class CompaniesService {
         pages: totalPages, //tổng số trang với điều kiện query
         total: totalItems, // tổng số phần tử (số bản ghi)
       },
-      result, //kết quả query
+      result,
     };
   }
 
