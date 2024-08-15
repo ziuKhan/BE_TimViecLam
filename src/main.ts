@@ -18,7 +18,7 @@ async function bootstrap() {
   app.use(cookieParser());
 
   app.enableCors({
-    origin: 'http://localhost:3003', //để * là cho tất cả kết nối tới còn để localhost thì chỉ local ý dùng
+    origin: '*', //để * là cho tất cả kết nối tới còn để localhost thì chỉ local ý dùng
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     preflightContinue: false,
   });

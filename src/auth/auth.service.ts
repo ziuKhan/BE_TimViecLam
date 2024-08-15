@@ -102,6 +102,11 @@ export class AuthService {
     } catch (err) {
       throw new BadRequestException('Refresh token đã hết hạn.', err);
     }
-    return;
+  };
+
+  logout = (response: Response, user: IUser) => {
+    response.clearCookie('refresh_token');
+    this.usersService.updateUserToken('', user._id);
+    return 'OK';
   };
 }

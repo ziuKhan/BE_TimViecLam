@@ -47,6 +47,10 @@ export class UsersService {
 
   async findAll(currentPage: number, limit: number, qs: string) {
     const { filter, sort, population } = aqp(qs);
+
+    delete filter.current;
+    delete filter.pageSize;
+
     let offset = (+currentPage - 1) * +limit;
     let defaultLimit = +limit ? +limit : 10;
 
@@ -75,14 +79,6 @@ export class UsersService {
     if (!mongoose.Types.ObjectId.isValid(id)) return 'Not found';
 
     return this.UserModel.findById(id);
-  }
-
-  findOneByUsername(username: string) {
-    return this.UserModel.findOne({ email: username });
-  }
-
-  isValidPassword(password: string, hash: string) {
-    return bcrypt.compare(password, hash);
   }
 
   async update(updateUserDto: UpdateUserDto, iuser: IUser) {
@@ -129,6 +125,13 @@ export class UsersService {
     };
   }
 
+  findOneByUsername(username: string) {
+    return this.UserModel.findOne({ email: username });
+  }
+
+  isValidPassword(password: string, hash: string) {
+    return bcrypt.compare(password, hash);
+  }
   updateUserToken = (refreshToken: string, _id: string) => {
     return this.UserModel.updateOne({ _id }, { refreshToken });
   };
@@ -136,5 +139,4 @@ export class UsersService {
   findUserByToken = (refreshToken: string) => {
     return this.UserModel.findOne({ refreshToken });
   };
-  
 }
