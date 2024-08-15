@@ -35,7 +35,7 @@ export class ResumesController {
   }
 
   @ResponseMessage('Get resume successfully')
-  @Get('by=:id')
+  @Get(':id')
   findOne(@Param('id') id: string) {
     return this.resumesService.findOne(id);
   }

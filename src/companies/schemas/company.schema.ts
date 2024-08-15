@@ -11,6 +11,8 @@ export class Company {
   address: string;
   @Prop()
   description: string;
+  @Prop()
+  logo: string;
 
   //----------------------------------
 

@@ -40,7 +40,7 @@ export class UsersController {
   }
 
   @Public()
-  @Get('by=:id')
+  @Get(':id')
   @ResponseMessage('Fetch user by id')
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(id); //dấu + là đang chuyển string sang number nhưng ko cần vì muốn giữ string

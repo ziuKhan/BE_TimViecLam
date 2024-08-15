@@ -32,7 +32,13 @@ export class AuthController {
 
   // @UseGuards(JwtAuthGuard)
   @ResponseMessage('Get User by access token')
-  @Get('account')
+  @Get('/account')
+  getAccount(@User() user: IUser) {
+    return user;
+  }
+
+  @ResponseMessage('Get User by access token')
+  @Get('/profile')
   getProfile(@User() user: IUser) {
     return user;
   }
@@ -56,13 +62,12 @@ export class AuthController {
   }
 
   // @Public()
-  @Get('/logout')
+  @Post('/logout')
   @ResponseMessage('Logout successfully')
   async logout(
     @Res({ passthrough: true }) response: Response,
     @User() user: IUser,
   ) {
-    
-    return  this.authService.logout(response,user);;
+    return this.authService.logout(response, user);
   }
 }

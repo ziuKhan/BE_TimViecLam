@@ -10,24 +10,28 @@ import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  app.useStaticAssets(join(__dirname, '..', 'public'));
   const configService = app.get(ConfigService);
   app.useGlobalPipes(new ValidationPipe());
   const reflector = app.get(Reflector);
   app.useGlobalGuards(new JwtAuthGuard(reflector));
   app.useGlobalInterceptors(new TransformInterceptor(reflector));
   app.use(cookieParser());
-
-  app.enableCors({
-    origin: '*', //để * là cho tất cả kết nối tới còn để localhost thì chỉ local ý dùng
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    preflightContinue: false,
-  });
-
   //config versioning
   app.setGlobalPrefix('api');
   app.enableVersioning({
     type: VersioningType.URI,
     defaultVersion: ['1'],
+  });
+
+  app.enableCors({
+    origin: 'http://localhost:3000', //để * là cho tất cả kết nối tới còn để localhost thì chỉ local ý dùng
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    preflightContinue: false,
+    credentials: true, // Cho phép gửi cookie trong các yêu cầu CORS
+    allowedHeaders:
+      'Content-Type, Authorization, X-Requested-With, folder_type',
   });
 
   await app.listen(configService.get<string>('PORT'));
