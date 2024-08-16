@@ -1,5 +1,6 @@
 import {
   ExecutionContext,
+  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -23,10 +24,26 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     return super.canActivate(context);
   }
 
-  handleRequest(err, user, info) {
+  handleRequest(err, user, info, context: ExecutionContext) {
+    const request = context.switchToHttp().getRequest();
     if (err || !user) {
       throw err || new UnauthorizedException('Token không hợp lệ');
     }
-    return user;
+
+    //Check permission
+    const targetMethod = request.method;
+    const targetApiPath = request.route?.path;
+
+    const permission = user?.permissions?.find(
+      (permission) =>
+        targetMethod === permission.method &&
+        targetApiPath === permission.apiPath,
+    );
+
+    if (!Boolean(permission) || !permission) {
+      throw new ForbiddenException('Bạn không có quyền truy cập');
+    }
+      return user;
+   
   }
 }

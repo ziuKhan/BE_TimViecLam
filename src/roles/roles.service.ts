@@ -63,8 +63,8 @@ export class RolesService {
     };
   }
 
-  findOne(id: string) {
-    if (!mongoose.Types.ObjectId.isValid(id)) {
+  async findOne(id: string) {
+    if (await !mongoose.Types.ObjectId.isValid(id)) {
       throw new BadRequestException('ID Không tồn tại');
     }
 

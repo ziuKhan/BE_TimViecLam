@@ -99,10 +99,13 @@ export class UsersService {
   }
 
   async remove(id: string, iuser: IUser) {
+
     if (!mongoose.Types.ObjectId.isValid(id))
       throw new BadRequestException('Không tồn tại ID');
 
-    if ((await this.userModel.findById(id))?.email === 'admin@gmail.com')
+    if (
+      (await this.userModel.findById({ _id: id }))?.email === 'admin@gmail.com'
+    )
       throw new BadRequestException('ADMIN không đọc xóa');
 
     await this.userModel.updateOne(
