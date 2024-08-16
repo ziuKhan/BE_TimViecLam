@@ -41,8 +41,8 @@ export class ResumesController {
   }
 
   @ResponseMessage('Get resumes by user successfully')
-  @Get('by-user')
-  findByUser(@User() user: IUser) {
+  @Post('by-user')
+  getResumeByUser(@User() user: IUser) {
     return this.resumesService.findByUser(user);
   }
 

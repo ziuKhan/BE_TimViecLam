@@ -9,6 +9,7 @@ import * as bcrypt from 'bcrypt';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { IUser } from 'src/auth/users.interface';
 import aqp from 'api-query-params';
+import { Permission } from 'src/permissions/Schemas/permission.schema';
 
 @Injectable()
 export class UsersService {
@@ -61,6 +62,7 @@ export class UsersService {
       .skip(offset)
       .limit(defaultLimit)
       .sort(sort as any)
+      .select('-password')
       .populate(population)
       .exec();
 
@@ -78,7 +80,9 @@ export class UsersService {
   findOne(id: string) {
     if (!mongoose.Types.ObjectId.isValid(id)) return 'Not found';
 
-    return this.UserModel.findById(id);
+    return this.UserModel.findById(id)
+      .select('-password')
+      .populate({ path: 'role', select: { name: 1, _id: 1 } });
   }
 
   async update(updateUserDto: UpdateUserDto, iuser: IUser) {
@@ -90,7 +94,12 @@ export class UsersService {
   }
 
   async remove(id: string, iuser: IUser) {
-    if (!mongoose.Types.ObjectId.isValid(id)) return 'Không tồn tại ID';
+    if (!mongoose.Types.ObjectId.isValid(id))
+      throw new BadRequestException('Không tồn tại ID');
+
+    if ((await this.UserModel.findById(id))?.email === 'admin@gmail.com')
+      throw new BadRequestException('ADMIN không đọc xóa');
+
     await this.UserModel.updateOne(
       { _id: id },
       { deletedBy: { _id: iuser?._id, email: iuser?.email } },
@@ -126,7 +135,10 @@ export class UsersService {
   }
 
   findOneByUsername(username: string) {
-    return this.UserModel.findOne({ email: username });
+    return this.UserModel.findOne({ email: username }).populate({
+      path: 'role',
+      select: { name: 1, Permissions: 1 },
+    });
   }
 
   isValidPassword(password: string, hash: string) {

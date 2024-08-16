@@ -57,7 +57,7 @@ export class CompaniesService {
     return this.companyModel.findById(id);
   }
 
-  update(id: string, updateCompanyDto: UpdateCompanyDto, @User() user: IUser) {
+  update(id: string, updateCompanyDto: UpdateCompanyDto,  user: IUser) {
     return this.companyModel.updateOne(
       { _id: id },
       {
@@ -67,7 +67,7 @@ export class CompaniesService {
     );
   }
 
-  async remove(id: string, @User() user: IUser) {
+  async remove(id: string,  user: IUser) {
     await this.companyModel.updateOne(
       { _id: id },
       { deletedBy: { _id: user._id, email: user.email } },
