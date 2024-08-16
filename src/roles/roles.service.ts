@@ -7,6 +7,7 @@ import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import aqp from 'api-query-params';
 import { IUser } from 'src/auth/users.interface';
 import mongoose from 'mongoose';
+import { ADMIN_ROLE } from 'src/databases/sample';
 
 @Injectable()
 export class RolesService {
@@ -92,8 +93,8 @@ export class RolesService {
   async remove(id: string, user: IUser) {
     const role = await this.roleModel.findById(id);
     if (!role) throw new BadRequestException('ID Không tồn tại');
-    else if (role.name === 'ADMIN')
-      throw new BadRequestException('ADMIN không đọc xóa');
+    else if (role.name === ADMIN_ROLE)
+      throw new BadRequestException('ADMIN không được xóa');
 
     await this.roleModel.updateOne(
       { _id: id },

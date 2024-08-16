@@ -14,10 +14,14 @@ import { LocalAuthGuard } from './local-auth.guard';
 import { IUser } from './users.interface';
 import { RegisterUserDto } from 'src/users/dto/create-user.dto';
 import { Request, Response } from 'express';
+import { RolesService } from 'src/roles/roles.service';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private roleService: RolesService,
+  ) {}
 
   @Public()
   @UseGuards(LocalAuthGuard)
@@ -33,7 +37,9 @@ export class AuthController {
   // @UseGuards(JwtAuthGuard)
   @ResponseMessage('Get User by access token')
   @Get('/account')
-  getAccount(@User() user: IUser) {
+  async getAccount(@User() user: IUser) {
+    const temp = (await this.roleService.findOne(user.role._id)) as any;
+    user.permissions = temp.permissions;
     return user;
   }
 

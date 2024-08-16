@@ -6,6 +6,8 @@ import { RegisterUserDto } from 'src/users/dto/create-user.dto';
 import { ConfigService } from '@nestjs/config';
 import ms from 'ms';
 import { Response } from 'express';
+import { RolesService } from 'src/roles/roles.service';
+import { Permission } from 'src/permissions/Schemas/permission.schema';
 
 @Injectable()
 export class AuthService {
@@ -13,6 +15,7 @@ export class AuthService {
     private usersService: UsersService,
     private jwtService: JwtService,
     private configService: ConfigService,
+    private rolesService: RolesService,
   ) {}
 
   async validateUser(username: string, passport: string): Promise<any> {
@@ -20,12 +23,19 @@ export class AuthService {
 
     if (!user) return null;
 
-    if (await this.usersService.isValidPassword(passport, user.password))
-      return user;
+    if (await this.usersService.isValidPassword(passport, user.password)) {
+      const userRole = user.role as unknown as { _id: string; name: string };
+      const temp = await this.rolesService.findOne(userRole._id);
+
+      return {
+        ...user.toObject(),
+        permissions: temp?.permissions ?? [],
+      };
+    }
   }
 
   async login(user: IUser, response: Response) {
-    const { _id, name, email, role } = user;
+    const { _id, name, email, role, permissions } = user;
     const payload = {
       sub: 'token login',
       iss: 'from server',
@@ -47,7 +57,13 @@ export class AuthService {
 
     return {
       access_token: this.jwtService.sign(payload),
-      user: { _id, name, email, role },
+      user: {
+        _id,
+        name,
+        email,
+        role,
+        permissions,
+      },
     };
   }
 
@@ -82,6 +98,9 @@ export class AuthService {
         };
         const refresh_Token = await this.createRefreshToken(payload);
 
+        const userRole = user.role as unknown as { _id: string; name: string };
+        const temp = await this.rolesService.findOne(userRole._id);
+
         //update refresh token in database user
         await this.usersService.updateUserToken(refresh_Token, _id.toString());
 
@@ -94,7 +113,13 @@ export class AuthService {
 
         return {
           access_token: this.jwtService.sign(payload),
-          user: { _id, name, email, role },
+          user: {
+            _id,
+            name,
+            email,
+            role,
+            permissions: temp?.permissions ?? [],
+          },
         };
       } else {
         throw new BadRequestException('Refresh token hết hợp.');

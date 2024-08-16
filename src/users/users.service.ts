@@ -10,11 +10,14 @@ import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { IUser } from 'src/auth/users.interface';
 import aqp from 'api-query-params';
 import { Permission } from 'src/permissions/Schemas/permission.schema';
+import { Role, RoleDocument } from 'src/roles/Schemas/role.schema';
+import { USER_ROLE } from 'src/databases/sample';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectModel(User.name) private UserModel: SoftDeleteModel<UserDocument>,
+    @InjectModel(User.name) private userModel: SoftDeleteModel<UserDocument>,
+    @InjectModel(Role.name) private roleModel: SoftDeleteModel<RoleDocument>,
   ) {}
 
   // hash password
@@ -24,7 +27,7 @@ export class UsersService {
 
   async create(createUserDt: CreateUserDto, iuser: IUser) {
     if (
-      await this.UserModel.findOne({
+      await this.userModel.findOne({
         email: createUserDt.email,
       })
     ) {
@@ -36,7 +39,7 @@ export class UsersService {
     createUserDt.password = await this.hashPassword(createUserDt.password);
 
     //create a new user
-    let user = await this.UserModel.create({
+    let user = await this.userModel.create({
       ...createUserDt,
       createdBy: { _id: iuser?._id, email: iuser?.email },
     });
@@ -55,10 +58,11 @@ export class UsersService {
     let offset = (+currentPage - 1) * +limit;
     let defaultLimit = +limit ? +limit : 10;
 
-    const totalItems = (await this.UserModel.find(filter)).length;
+    const totalItems = (await this.userModel.find(filter)).length;
     const totalPages = Math.ceil(totalItems / defaultLimit);
 
-    const result = await this.UserModel.find(filter)
+    const result = await this.userModel
+      .find(filter)
       .skip(offset)
       .limit(defaultLimit)
       .sort(sort as any)
@@ -80,14 +84,15 @@ export class UsersService {
   findOne(id: string) {
     if (!mongoose.Types.ObjectId.isValid(id)) return 'Not found';
 
-    return this.UserModel.findById(id)
+    return this.userModel
+      .findById(id)
       .select('-password')
       .populate({ path: 'role', select: { name: 1, _id: 1 } });
   }
 
   async update(updateUserDto: UpdateUserDto, iuser: IUser) {
     updateUserDto.password = await this.hashPassword(updateUserDto.password);
-    return await this.UserModel.updateOne(
+    return await this.userModel.updateOne(
       { _id: updateUserDto._id },
       { ...updateUserDto, updatedBy: { _id: iuser._id, email: iuser.email } },
     );
@@ -97,20 +102,20 @@ export class UsersService {
     if (!mongoose.Types.ObjectId.isValid(id))
       throw new BadRequestException('Không tồn tại ID');
 
-    if ((await this.UserModel.findById(id))?.email === 'admin@gmail.com')
+    if ((await this.userModel.findById(id))?.email === 'admin@gmail.com')
       throw new BadRequestException('ADMIN không đọc xóa');
 
-    await this.UserModel.updateOne(
+    await this.userModel.updateOne(
       { _id: id },
       { deletedBy: { _id: iuser?._id, email: iuser?.email } },
     );
 
-    return await this.UserModel.softDelete({ _id: id });
+    return await this.userModel.softDelete({ _id: id });
   }
 
   async register(registerUserDto: RegisterUserDto) {
     if (
-      await this.UserModel.findOne({
+      await this.userModel.findOne({
         email: registerUserDto.email,
       })
     ) {
@@ -119,13 +124,15 @@ export class UsersService {
       );
     }
 
+    const userRole = await this.roleModel.findOne({ name: USER_ROLE });
+
     registerUserDto.password = await this.hashPassword(
       registerUserDto.password,
     );
     //create a new user
-    let user = await this.UserModel.create({
+    let user = await this.userModel.create({
       ...registerUserDto,
-      role: 'USER',
+      role: userRole?._id,
     });
 
     return {
@@ -135,9 +142,9 @@ export class UsersService {
   }
 
   findOneByUsername(username: string) {
-    return this.UserModel.findOne({ email: username }).populate({
+    return this.userModel.findOne({ email: username }).populate({
       path: 'role',
-      select: { name: 1, Permissions: 1 },
+      select: { name: 1 },
     });
   }
 
@@ -145,10 +152,13 @@ export class UsersService {
     return bcrypt.compare(password, hash);
   }
   updateUserToken = (refreshToken: string, _id: string) => {
-    return this.UserModel.updateOne({ _id }, { refreshToken });
+    return this.userModel.updateOne({ _id }, { refreshToken });
   };
 
   findUserByToken = (refreshToken: string) => {
-    return this.UserModel.findOne({ refreshToken });
+    return this.userModel.findOne({ refreshToken }).populate({
+      path: 'role',
+      select: { name: 1 },
+    });
   };
 }
