@@ -30,8 +30,8 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     preflightContinue: false,
     credentials: true, // Cho phép gửi cookie trong các yêu cầu CORS
-    allowedHeaders:
-      'Content-Type, Authorization, X-Requested-With, folder_type',
+    // allowedHeaders:
+    //   'Content-Type, Authorization, X-Requested-With, folder_type',
   });
 
   await app.listen(configService.get<string>('PORT'));

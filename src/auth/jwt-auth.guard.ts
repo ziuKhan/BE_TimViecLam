@@ -32,18 +32,21 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
     //Check permission
     const targetMethod = request.method;
-    const targetApiPath = request.route?.path;
+    const targetApiPath = request.route?.path as string;
 
-    const permission = user?.permissions?.find(
+    let permission = user?.permissions?.find(
       (permission) =>
         targetMethod === permission.method &&
         targetApiPath === permission.apiPath,
     );
 
+    if (targetApiPath.startsWith('/api/v1/auth')) {
+      permission = true;
+    }
+
     if (!Boolean(permission) || !permission) {
       throw new ForbiddenException('Bạn không có quyền truy cập');
     }
-      return user;
-   
+    return user;
   }
 }
