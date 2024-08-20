@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
-import { IS_PUBLIC_KEY } from '../decorator/customize';
+import { IS_PUBLIC_KEY, IS_PUBLIC_PERMISSION } from '../decorator/customize';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -26,6 +26,12 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
   handleRequest(err, user, info, context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
+
+    const isPublicPermission = this.reflector.getAllAndOverride<boolean>(
+      IS_PUBLIC_PERMISSION,
+      [context.getHandler(), context.getClass()],
+    );
+
     if (err || !user) {
       throw err || new UnauthorizedException('Token không hợp lệ');
     }
@@ -33,20 +39,21 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     //Check permission
     const targetMethod = request.method;
     const targetApiPath = request.route?.path as string;
-
-    let permission = user?.permissions?.find(
+    const permission = user?.permissions ?? [];
+    let isExit = permission?.find(
       (permission) =>
         targetMethod === permission.method &&
         targetApiPath === permission.apiPath,
     );
 
     if (targetApiPath.startsWith('/api/v1/auth')) {
-      permission = true;
+      isExit = true;
     }
 
-    if (!Boolean(permission) || !permission) {
+    if (!isPublicPermission && !isExit) {
       throw new ForbiddenException('Bạn không có quyền truy cập');
     }
+
     return user;
   }
 }

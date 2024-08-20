@@ -11,7 +11,12 @@ import {
 import { SubscribersService } from './subscribers.service';
 import { CreateSubscriberDto } from './dto/create-subscriber.dto';
 import { UpdateSubscriberDto } from './dto/update-subscriber.dto';
-import { Public, ResponseMessage, User } from 'src/decorator/customize';
+import {
+  Public,
+  ResponseMessage,
+  SkipCheckPermission,
+  User,
+} from 'src/decorator/customize';
 import { IUser } from 'src/auth/users.interface';
 
 @Controller('subscribers')
@@ -37,20 +42,26 @@ export class SubscribersController {
     return this.subscribersService.findAll(+currentPage, +limit, qs);
   }
 
+  @Post('skills')
+  @ResponseMessage('Get subscribers by skills successfully')
+  @SkipCheckPermission()
+  getUserSkills(@User() user: IUser) {
+    return this.subscribersService.getSkills(user);
+  }
   @Get(':id')
   @ResponseMessage('Get Subscribers successfully')
   findOne(@Param('id') id: string) {
     return this.subscribersService.findOne(id);
   }
 
-  @Patch(':id')
+  @Patch()
+  @SkipCheckPermission()
   @ResponseMessage('Update Subscribers successfully')
   update(
-    @Param('id') id: string,
     @Body() updateSubscribersDto: UpdateSubscriberDto,
     @User() user: IUser,
   ) {
-    return this.subscribersService.update(id, updateSubscribersDto, user);
+    return this.subscribersService.update(updateSubscribersDto, user);
   }
 
   @Delete(':id')

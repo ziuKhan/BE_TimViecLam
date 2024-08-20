@@ -9,6 +9,7 @@ import {
 } from 'src/subscribers/Schemas/subscriber.schema';
 import { Job, JobDocument } from 'src/jobs/Schemas/job.schema';
 import { InjectModel } from '@nestjs/mongoose';
+import { Cron } from '@nestjs/schedule';
 
 @Controller('mail')
 export class MailController {
@@ -22,24 +23,12 @@ export class MailController {
   ) {}
 
   @Get()
+  @Cron('0 0 * * 6')
   @Public()
-  @ResponseMessage('Test email')
-  async handleTestEmail() {
-    let jobs = [
-      {
-        name: 'Job 1 siêu vip pro',
-        company: 'Company 1',
-        salary: 1000,
-        skills: ['HTML', 'CSS', 'JavaScript'],
-      },
-      {
-        name: 'Job 2 siêu vip pro',
-        company: 'Company 2',
-        salary: 42000,
-        skills: ['HTML', 'CSS', 'JavaScript'],
-      },
-    ];
+  @ResponseMessage('Send email')
+  async handleEmail() {
     const subscribers = await this.subscriberModel.find({});
+
     for (const subs of subscribers) {
       const subsSkills = subs.skills;
       const jobWithMatchingSkills = await this.jobModel.find({
@@ -57,8 +46,8 @@ export class MailController {
           };
         });
         await this.mailerService.sendMail({
-          to: 'lolhy44@gmail.com',
-          from: '"Support Team" <support@example.com>', // override default from
+          to: subs.email,
+          from: '"Support Team" <support@example.com>',
           subject: 'Welcome to Nice App! Confirm your Email',
           template: 'new-job',
           context: {

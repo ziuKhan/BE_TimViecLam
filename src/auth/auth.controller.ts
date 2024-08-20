@@ -15,6 +15,7 @@ import { IUser } from './users.interface';
 import { RegisterUserDto } from 'src/users/dto/create-user.dto';
 import { Request, Response } from 'express';
 import { RolesService } from 'src/roles/roles.service';
+import { ThrottlerGuard } from '@nestjs/throttler';
 
 @Controller('auth')
 export class AuthController {
@@ -35,6 +36,7 @@ export class AuthController {
   }
 
   // @UseGuards(JwtAuthGuard)
+  @UseGuards(ThrottlerGuard)
   @ResponseMessage('Get User by access token')
   @Get('/account')
   async getAccount(@User() user: IUser) {
