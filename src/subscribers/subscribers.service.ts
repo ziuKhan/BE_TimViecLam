@@ -24,11 +24,11 @@ export class SubscribersService {
       );
     }
 
-    const createSubscriber = await this.SubscriberModel.create({
+    const subscriber = await this.SubscriberModel.create({
       ...createSubscriberDto,
       createdBy: { _id: user._id, email: user.email },
     });
-    return { _id: createSubscriber._id, createdAt: createSubscriber.createdAt };
+    return { _id: subscriber._id, createdAt: subscriber.createdAt };
   }
 
   async findAll(currentPage: number, limit: number, qs: string) {

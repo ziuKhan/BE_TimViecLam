@@ -1,7 +1,7 @@
-import { Prop, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
 export type SubscriberDocument = HydratedDocument<Subscriber>;
-
+@Schema({ timestamps: true })
 export class Subscriber {
   @Prop()
   email: string;
