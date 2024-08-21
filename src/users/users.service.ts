@@ -2,10 +2,9 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateUserDto, RegisterUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User, UserDocument } from './schemas/user.schema';
-
+import * as bcryptJS from 'bcryptjs';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
-import * as bcrypt from 'bcrypt';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { IUser } from 'src/auth/users.interface';
 import aqp from 'api-query-params';
@@ -22,7 +21,7 @@ export class UsersService {
 
   // hash password
   hashPassword(password: string) {
-    return bcrypt.hash(password, 10);
+    return bcryptJS.hashSync(password, 10);
   }
 
   async create(createUserDt: CreateUserDto, iuser: IUser) {
@@ -99,7 +98,6 @@ export class UsersService {
   }
 
   async remove(id: string, iuser: IUser) {
-
     if (!mongoose.Types.ObjectId.isValid(id))
       throw new BadRequestException('Không tồn tại ID');
 
@@ -152,7 +150,7 @@ export class UsersService {
   }
 
   isValidPassword(password: string, hash: string) {
-    return bcrypt.compare(password, hash);
+    return bcryptJS.compare(password, hash);
   }
   updateUserToken = (refreshToken: string, _id: string) => {
     return this.userModel.updateOne({ _id }, { refreshToken });
