@@ -11,7 +11,9 @@ import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { Public, ResponseMessage } from 'src/decorator/customize';
 import fs from 'fs';
 import { FilesService } from './ﬁles.service';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Files')
 @Controller('files')
 export class FilesController {
   constructor(private readonly filesService: FilesService) {}
