@@ -6,6 +6,7 @@ import { Job, JobDocument } from './Schemas/job.schema';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { IUser } from 'src/auth/users.interface';
 import aqp from 'api-query-params';
+import mongoose from 'mongoose';
 
 @Injectable()
 export class JobsService {

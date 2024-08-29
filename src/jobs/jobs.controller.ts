@@ -43,6 +43,9 @@ export class JobsController {
     return this.jobsService.findOne(id);
   }
 
+
+
+
   @Patch(':id')
   @ResponseMessage('Update job successfully')
   update(

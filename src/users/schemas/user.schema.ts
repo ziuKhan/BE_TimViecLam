@@ -6,6 +6,7 @@ export type UserDocument = HydratedDocument<User>;
 
 @Schema({ timestamps: true })
 export class User {
+
   @Prop({ required: true })
   name: string;
 
@@ -56,6 +57,7 @@ export class User {
     _id: mongoose.Schema.Types.ObjectId;
     email: string;
   };
+
   @Prop()
   createdAt: Date;
   @Prop()

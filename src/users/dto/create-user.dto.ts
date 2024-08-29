@@ -60,15 +60,9 @@ export class RegisterUserDto {
   @IsNotEmpty({ message: 'name không được để trống' })
   name: string;
 
-  @IsNotEmpty({ message: 'address không được để trống' })
-  address: string;
-
-  @IsNotEmpty({ message: 'gender không được để trống' })
-  gender: string;
-
-  @IsNotEmpty({ message: 'age không được để trống' })
-  age: number;
 }
+
+
 export class UserLoginDto {
   @IsString()
   @IsNotEmpty()

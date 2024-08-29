@@ -8,12 +8,16 @@ import { IUser } from 'src/auth/users.interface';
 import { User } from 'src/decorator/customize';
 import aqp from 'api-query-params';
 import { isEmpty } from 'class-validator';
+import { Job, JobDocument } from '../jobs/Schemas/job.schema';
+import { count } from 'console';
 
 @Injectable()
 export class CompaniesService {
   constructor(
     @InjectModel(Company.name)
     private companyModel: SoftDeleteModel<CompanyDocument>,
+    @InjectModel(Job.name)
+    private jobModel: SoftDeleteModel<JobDocument>,
   ) {}
 
   create(createCompanyDto: CreateCompanyDto, user: IUser) {
@@ -23,8 +27,13 @@ export class CompaniesService {
     });
   }
 
+  async findJobs(id: string) {
+    return this.jobModel.countDocuments({ 'company._id': id }).exec();
+  }
+
   async findAll(currentPage: number, limit: number, qs: string) {
     const { filter, sort, population } = aqp(qs);
+
     delete filter.current;
     delete filter.pageSize;
 
@@ -34,13 +43,23 @@ export class CompaniesService {
     const totalItems = (await this.companyModel.find(filter)).length;
     const totalPages = Math.ceil(totalItems / defaultLimit);
 
-    const result = await this.companyModel
-      .find(filter)
+    const companyU = await this.companyModel.find(filter)
       .skip(offset)
       .limit(defaultLimit)
       .sort(sort as any)
       .populate(population)
+      .lean()
       .exec();
+
+    const result = await Promise.all(
+      companyU.map(async (item) => {
+        return {
+          ...item,
+          jobs: await this.findJobs(item._id.toString()),
+        };
+
+      }),
+    )
 
     return {
       meta: {
@@ -53,13 +72,13 @@ export class CompaniesService {
     };
   }
 
-  findOne(id: string) {
-    return this.companyModel.findById(id);
+
+  async   findOne(id: string) {
+    return this.companyModel.findOne({ _id: id });
   }
 
-  update(id: string, updateCompanyDto: UpdateCompanyDto,  user: IUser) {
+  update( updateCompanyDto: UpdateCompanyDto,  user: IUser) {
     return this.companyModel.updateOne(
-      { _id: id },
       {
         ...updateCompanyDto,
         updatedBy: { _id: user._id, email: user.email },
