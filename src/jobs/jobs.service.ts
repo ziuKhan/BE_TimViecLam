@@ -23,11 +23,25 @@ export class JobsService {
     return { _id: createJob._id, createdAt: createJob.createdAt };
   }
 
-  async findAll(currentPage: number, limit: number, qs: string) {
+  async findAll(gte:number, lte:number, currentPage: number, limit: number, qs: string) {
     const { filter, sort, population } = aqp(qs);
 
     delete filter.current;
+    delete filter.gte;
+    delete filter.lte;
     delete filter.pageSize;
+
+  // Chỉ xử lý nếu filter.salary là một đối tượng
+    if (gte && lte) {
+      filter.salary = { $gte: gte, $lte: lte };
+    } else if (gte) {
+      filter.salary = { $gte: gte };
+    } else if (lte) {
+      filter.salary = { $lte: lte };
+    }
+
+    console.log(filter);
+    
 
     let offset = (+currentPage - 1) * +limit;
     let defaultLimit = +limit ? +limit : 10;

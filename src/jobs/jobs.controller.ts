@@ -31,9 +31,11 @@ export class JobsController {
   findAll(
     @Query('current') currentPage: string,
     @Query('pageSize') limit: string,
+    @Query('gte') gte: string,
+    @Query('lte') lte: string,
     @Query() qs: string,
   ) {
-    return this.jobsService.findAll(+currentPage, +limit, qs);
+    return this.jobsService.findAll(+gte,+lte,+currentPage, +limit, qs);
   }
 
   @Public()

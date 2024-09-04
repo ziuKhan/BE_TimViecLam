@@ -39,7 +39,7 @@ export class AuthController {
   }
 
   // @UseGuards(JwtAuthGuard)
-  @UseGuards(ThrottlerGuard)
+  // @UseGuards(ThrottlerGuard)
   @ResponseMessage('Get User by access token')
   @Get('/account')
   async getAccount(@User() user: IUser) {

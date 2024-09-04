@@ -46,12 +46,12 @@ import { HealthModule } from './health/health.module';
     MailModule,
     ScheduleModule.forRoot(),
 
-    ThrottlerModule.forRoot([
-      {
-        ttl: 60000,
-        limit: 2,
-      },
-    ]),
+    // ThrottlerModule.forRoot([
+    //   {
+    //     ttl: 60000,
+    //     limit: 2,
+    //   },
+    // ]),
 
     HealthModule,
   ],
