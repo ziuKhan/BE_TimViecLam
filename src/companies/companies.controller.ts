@@ -37,19 +37,23 @@ export class CompaniesController {
   }
 
   @Public()
+  @ResponseMessage('Fetch company by id')
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.companiesService.findOne(id);
   }
 
-
+  @ResponseMessage('Update company successfully!')
   @Patch(':id')
   update(
+    @Param('id') id: string,
+    @Body() updateCompanyDto: UpdateCompanyDto,
     @User() user: IUser,
   ) {
-    return this.companiesService.update(UpdateCompanyDto, user);
+    return this.companiesService.update(id, updateCompanyDto, user);
   }
 
+  @ResponseMessage('Delete company successfully!')
   @Delete(':id')
   remove(@Param('id') id: string, @User() user: IUser) {
     return this.companiesService.remove(id, user);

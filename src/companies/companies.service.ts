@@ -27,6 +27,13 @@ export class CompaniesService {
     });
   }
 
+  createHR(createCompanyDto: CreateCompanyDto) {
+    return this.companyModel.create({
+      ...createCompanyDto,
+      isActive: false,
+    });
+  }
+
   async findJobs(id: string) {
     return this.jobModel.countDocuments({ 'company._id': id }).exec();
   }
@@ -43,7 +50,8 @@ export class CompaniesService {
     const totalItems = (await this.companyModel.find(filter)).length;
     const totalPages = Math.ceil(totalItems / defaultLimit);
 
-    const companyU = await this.companyModel.find(filter)
+    const companyU = await this.companyModel
+      .find(filter)
       .skip(offset)
       .limit(defaultLimit)
       .sort(sort as any)
@@ -57,9 +65,8 @@ export class CompaniesService {
           ...item,
           jobs: await this.findJobs(item._id.toString()),
         };
-
       }),
-    )
+    );
 
     return {
       meta: {
@@ -72,13 +79,14 @@ export class CompaniesService {
     };
   }
 
-
-  async   findOne(id: string) {
+  async findOne(id: string) {
     return this.companyModel.findOne({ _id: id });
   }
 
-  update( updateCompanyDto: UpdateCompanyDto,  user: IUser) {
+  update(id: string, updateCompanyDto: UpdateCompanyDto, user: IUser) {
+
     return this.companyModel.updateOne(
+      { _id: id },
       {
         ...updateCompanyDto,
         updatedBy: { _id: user._id, email: user.email },
@@ -86,7 +94,7 @@ export class CompaniesService {
     );
   }
 
-  async remove(id: string,  user: IUser) {
+  async remove(id: string, user: IUser) {
     await this.companyModel.updateOne(
       { _id: id },
       { deletedBy: { _id: user._id, email: user.email } },

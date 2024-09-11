@@ -7,9 +7,13 @@ import { Job, JobSchema } from '../jobs/Schemas/job.schema';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Company.name, schema: CompanySchema },{ name: Job.name, schema: JobSchema }]),
+    MongooseModule.forFeature([
+      { name: Company.name, schema: CompanySchema },
+      { name: Job.name, schema: JobSchema },
+    ]),
   ],
   controllers: [CompaniesController],
   providers: [CompaniesService],
+  exports: [CompaniesService],
 })
 export class CompaniesModule {}

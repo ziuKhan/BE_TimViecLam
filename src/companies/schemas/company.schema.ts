@@ -14,6 +14,8 @@ export class Company {
   @Prop()
   logo: string;
 
+  @Prop()
+  isActive: boolean;
   //----------------------------------
 
   //----------------------------------

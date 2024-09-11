@@ -1,5 +1,9 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CreateUserDto, RegisterUserDto } from './dto/create-user.dto';
+import {
+  CreateUserDto,
+  RegisterHRUserDto,
+  RegisterUserDto,
+} from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User, UserDocument } from './schemas/user.schema';
 import * as bcryptJS from 'bcryptjs';
@@ -10,7 +14,7 @@ import { IUser } from 'src/auth/users.interface';
 import aqp from 'api-query-params';
 import { Permission } from 'src/permissions/Schemas/permission.schema';
 import { Role, RoleDocument } from 'src/roles/Schemas/role.schema';
-import { USER_ROLE } from 'src/databases/sample';
+import { HR_ROLE, USER_ROLE } from 'src/databases/sample';
 
 @Injectable()
 export class UsersService {
@@ -89,15 +93,15 @@ export class UsersService {
       .populate({ path: 'role', select: { name: 1, _id: 1 } });
   }
 
-  async update(updateUserDto: UpdateUserDto, iuser: IUser) {
+  async update(updateUserDto: UpdateUserDto, iUser: IUser) {
     updateUserDto.password = await this.hashPassword(updateUserDto.password);
     return await this.userModel.updateOne(
       { _id: updateUserDto._id },
-      { ...updateUserDto, updatedBy: { _id: iuser._id, email: iuser.email } },
+      { ...updateUserDto, updatedBy: { _id: iUser._id, email: iUser.email } },
     );
   }
 
-  async remove(id: string, iuser: IUser) {
+  async remove(id: string, iUser: IUser) {
     if (!mongoose.Types.ObjectId.isValid(id))
       throw new BadRequestException('Không tồn tại ID');
 
@@ -108,7 +112,7 @@ export class UsersService {
 
     await this.userModel.updateOne(
       { _id: id },
-      { deletedBy: { _id: iuser?._id, email: iuser?.email } },
+      { deletedBy: { _id: iUser?._id, email: iUser?.email } },
     );
 
     return await this.userModel.softDelete({ _id: id });
@@ -142,6 +146,35 @@ export class UsersService {
     };
   }
 
+  async registerHR(registerHRUserDto: RegisterHRUserDto) {
+    if (
+      await this.userModel.findOne({
+        email: registerHRUserDto.email,
+      })
+    ) {
+      throw new BadRequestException(
+        `Email ${registerHRUserDto.email} đã tồn tại, vui lòng điền email khác`,
+      );
+    }
+
+    const userRole = await this.roleModel.findOne({ name: HR_ROLE });
+
+    registerHRUserDto.password = await this.hashPassword(
+      registerHRUserDto.password,
+    );
+    //create a new user
+    let user = await this.userModel.create({
+      ...registerHRUserDto,
+      role: userRole?._id,
+      isActive: false,
+    });
+
+    return {
+      _id: user?._id,
+      createdAt: user?.createdAt,
+    };
+  }
+
   findOneByUsername(username: string) {
     return this.userModel.findOne({ email: username }).populate({
       path: 'role',
@@ -149,9 +182,27 @@ export class UsersService {
     });
   }
 
-  isValidPassword(password: string, hash: string) {
+  async changePassword(
+    objectPass: { password: string; newPassword: string },
+    iUser: IUser,
+  ) {
+    if (!mongoose.Types.ObjectId.isValid(iUser._id)) return 'Not found';
+    const user: any = await this.userModel.findOne({ _id: iUser._id });
+
+    if (await this.isValidPassword(objectPass.password, user.password)) {
+      return this.userModel.updateOne(
+        { _id: user._id },
+        { password: this.hashPassword(objectPass.newPassword) },
+      );
+    } else {
+      throw new BadRequestException('Password không trùng');
+    }
+  }
+
+  async isValidPassword(password: string, hash: string): Promise<boolean> {
     return bcryptJS.compare(password, hash);
   }
+
   updateUserToken = (refreshToken: string, _id: string) => {
     return this.userModel.updateOne({ _id }, { refreshToken });
   };

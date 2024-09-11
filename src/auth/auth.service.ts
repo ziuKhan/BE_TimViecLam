@@ -2,12 +2,17 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { IUser } from './users.interface';
-import { RegisterUserDto } from 'src/users/dto/create-user.dto';
+import {
+  RegisterHRUserDto,
+  RegisterUserDto,
+} from 'src/users/dto/create-user.dto';
 import { ConfigService } from '@nestjs/config';
 import ms from 'ms';
 import { Response } from 'express';
 import { RolesService } from 'src/roles/roles.service';
 import { Permission } from 'src/permissions/Schemas/permission.schema';
+import { CompaniesService } from '../companies/companies.service';
+import { CreateCompanyDto } from '../companies/dto/create-company.dto';
 
 @Injectable()
 export class AuthService {
@@ -16,14 +21,16 @@ export class AuthService {
     private jwtService: JwtService,
     private configService: ConfigService,
     private rolesService: RolesService,
+    private companiesService: CompaniesService,
   ) {}
 
   async validateUser(username: string, passport: string): Promise<any> {
     const user = await this.usersService.findOneByUsername(username);
-
-    if (!user) return null;
-
-    if (await this.usersService.isValidPassword(passport, user.password)) {
+    if (user) {
+      return null;
+    } else if (
+     await this.usersService.isValidPassword(passport, user.password) 
+    ) {
       const userRole = user.role as unknown as { _id: string; name: string };
       const temp = await this.rolesService.findOne(userRole._id);
 
@@ -32,6 +39,7 @@ export class AuthService {
         permissions: temp?.permissions ?? [],
       };
     }
+    return null;
   }
 
   async login(user: IUser, response: Response) {
@@ -69,6 +77,13 @@ export class AuthService {
 
   register(registerUserDto: RegisterUserDto) {
     return this.usersService.register(registerUserDto);
+  }
+  createCompanyHR(createCompanyDto: CreateCompanyDto) {
+    return this.companiesService.createHR(createCompanyDto);
+  }
+
+  registerHR(registerHRUserDto: RegisterHRUserDto) {
+    return this.usersService.registerHR(registerHRUserDto);
   }
 
   createRefreshToken = (payload) => {

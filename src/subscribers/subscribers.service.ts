@@ -15,6 +15,21 @@ export class SubscribersService {
     private SubscriberModel: SoftDeleteModel<SubscriberDocument>,
   ) {}
 
+  async createOrUpdate(createSubscriberDto: CreateSubscriberDto, user: IUser) {
+    if (
+      await this.SubscriberModel.findOne({ email: createSubscriberDto.email })
+    ) 
+    {
+      return await this.update(createSubscriberDto, user);
+    }
+    else
+    {
+     return await this.create(createSubscriberDto, user);
+    }
+
+  }
+
+  
   async create(createSubscriberDto: CreateSubscriberDto, user: IUser) {
     if (
       await this.SubscriberModel.findOne({ email: createSubscriberDto.email })
@@ -68,6 +83,12 @@ export class SubscribersService {
     return this.SubscriberModel.findById(id);
   }
 
+  findOneByEmail(email: string) {
+    return this.SubscriberModel.findOne({ email: email });
+  }
+
+
+
   update(updateSubscriberDto: UpdateSubscriberDto, user: IUser) {
     return this.SubscriberModel.updateOne(
       { email: user.email },
@@ -95,4 +116,5 @@ export class SubscribersService {
     const { email } = user;
     return await this.SubscriberModel.findOne({ email }, { skills: 1 });
   }
+
 }

@@ -21,13 +21,9 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
+  @Public()
   @ResponseMessage('Create user successfully!')
-  create(
-    //tag @Body là request.body trong NestJS
-    //cách khai báo: @Body() (tên biến): (kiểu dữ liệu),
-    @Body() createUserDto: CreateUserDto, //kiểu dữ liệu là 1 class,
-    @User() user: IUser,
-  ) {
+  create(@Body() createUserDto: CreateUserDto, @User() user: IUser) {
     return this.usersService.create(createUserDto, user);
   }
 
@@ -58,5 +54,14 @@ export class UsersController {
   @Delete(':id')
   remove(@Param('id') id: string, @User() user: IUser) {
     return this.usersService.remove(id, user);
+  }
+
+  @Patch('/change-password')
+  @ResponseMessage('Change password user successfully!')
+  changePassword(
+    @Body() objectPass: { password: string; newPassword: string },
+    @User() iUser: IUser,
+  ) {
+    return this.usersService.changePassword(objectPass, iUser);
   }
 }

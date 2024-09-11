@@ -41,11 +41,18 @@ export class MulterConfigService implements MulterOptionsFactory {
           this.ensureExists(`public/images/${folder}`);
           cb(null, join(this.getRootPath(), `public/images/${folder}`));
         },
+        
         filename: (req, file, cb) => {
           //get image extension
           let extName = path.extname(file.originalname);
           //get image's name (without extension)
-          let baseName = path.basename(file.originalname, extName);
+          // let baseName = path.basename(file.originalname, extName);
+          const baseName = path
+            .basename(file.originalname, extName)
+            .normalize('NFD') 
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/[^a-zA-Z0-9]/g, '_');
+
           let finalName = `${baseName}-${Date.now()}${extName}`;
           cb(null, finalName);
         },
@@ -73,8 +80,9 @@ export class MulterConfigService implements MulterOptionsFactory {
         } else cb(null, true);
       },
       limits: {
-        fileSize: 1024 * 1024 * 1, // 1MB
+        fileSize: 1024 * 1024 * 10, // 10MB
       },
     };
   }
 }
+

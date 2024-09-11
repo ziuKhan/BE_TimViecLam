@@ -12,11 +12,16 @@ import { AuthService } from './auth.service';
 import { Public, ResponseMessage, User } from '../decorator/customize';
 import { LocalAuthGuard } from './local-auth.guard';
 import { IUser } from './users.interface';
-import { RegisterUserDto, UserLoginDto } from 'src/users/dto/create-user.dto';
+import {
+  RegisterHRUserDto,
+  RegisterUserDto,
+  UserLoginDto,
+} from 'src/users/dto/create-user.dto';
 import { Request, Response } from 'express';
 import { RolesService } from 'src/roles/roles.service';
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { CreateCompanyDto } from '../companies/dto/create-company.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -26,6 +31,7 @@ export class AuthController {
     private roleService: RolesService,
   ) {}
 
+  
   @Public()
   @UseGuards(LocalAuthGuard)
   @ResponseMessage('Login successfully')
@@ -59,6 +65,19 @@ export class AuthController {
   @ResponseMessage('Register a new user')
   register(@Body() registerUserDto: RegisterUserDto) {
     return this.authService.register(registerUserDto);
+  }
+
+  @Public()
+  @Post('/customer/register')
+  @ResponseMessage('Register a new HR user')
+  registerHR(@Body() registerHRUserDto: RegisterHRUserDto) {
+    return this.authService.register(registerHRUserDto);
+  }
+  @Public()
+  @Post('/customer/company')
+  @ResponseMessage('Register a new HR user')
+  createCompanyHR(@Body() createCompanyDto: CreateCompanyDto) {
+    return this.authService.createCompanyHR(createCompanyDto);
   }
 
   @Public()
