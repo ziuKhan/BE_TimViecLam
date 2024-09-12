@@ -40,7 +40,6 @@ export class JobsService {
       filter.salary = { $lte: lte };
     }
 
-    console.log(filter);
     
 
     let offset = (+currentPage - 1) * +limit;
