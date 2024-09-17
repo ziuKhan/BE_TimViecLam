@@ -93,11 +93,17 @@ export class UsersService {
       .populate({ path: 'role', select: { name: 1, _id: 1 } });
   }
 
-  async update(updateUserDto: UpdateUserDto, iUser: IUser) {
-    updateUserDto.password = await this.hashPassword(updateUserDto.password);
-    return await this.userModel.updateOne(
-      { _id: updateUserDto._id },
-      { ...updateUserDto, updatedBy: { _id: iUser._id, email: iUser.email } },
+  async update(id: string, updateUserDto: UpdateUserDto, iUser: IUser) {
+    if (updateUserDto.password) {
+      updateUserDto.password = await this.hashPassword(updateUserDto.password);
+    }
+
+    return this.userModel.updateOne(
+      { _id: id },
+      {
+        ...updateUserDto,
+        updatedBy: { _id: iUser._id, email: iUser.email },
+      },
     );
   }
 

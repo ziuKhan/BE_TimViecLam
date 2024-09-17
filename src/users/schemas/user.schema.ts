@@ -23,7 +23,9 @@ export class User {
 
   @Prop()
   address: string;
-
+  @Prop()
+  isActive: boolean;
+  
   @Prop({ type: Object })
   company: {
     _id: mongoose.Schema.Types.ObjectId;
