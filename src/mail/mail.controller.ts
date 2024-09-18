@@ -49,7 +49,7 @@ export class MailController {
         });
         await this.mailerService.sendMail({
           to: subs.email,
-          from: '"Support Team" <support@example.com>',
+          from: '"ITViec" <itviec@example.com>',
           subject: 'Welcome to Nice App! Confirm your Email',
           template: 'new-job',
           context: {

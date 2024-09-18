@@ -10,5 +10,6 @@ export class CreateCompanyDto {
   @IsNotEmpty({ message: 'logo không được để trống' })
   logo: string;
 
+  @IsBoolean()
   isActive: boolean;
 }

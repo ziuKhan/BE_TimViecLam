@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { IUser } from './users.interface';
@@ -26,9 +30,8 @@ export class AuthService {
 
   async validateUser(username: string, passport: string): Promise<any> {
     const user = await this.usersService.findOneByUsername(username);
-
-    if (!user) {
-      return null;
+    if (!user || user.isDeleted) {
+      throw new UnauthorizedException('Tài khoản không tồn tại!');
     } else if (
       await this.usersService.isValidPassword(passport, user.password)
     ) {

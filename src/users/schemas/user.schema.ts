@@ -25,7 +25,7 @@ export class User {
   address: string;
   @Prop()
   isActive: boolean;
-  
+
   @Prop({ type: Object })
   company: {
     _id: mongoose.Schema.Types.ObjectId;
@@ -37,7 +37,7 @@ export class User {
     ref: Role.name,
   })
   role: mongoose.Schema.Types.ObjectId;
-
+  
   @Prop()
   refreshToken: string;
 

@@ -84,7 +84,6 @@ export class CompaniesService {
   }
 
   update(id: string, updateCompanyDto: UpdateCompanyDto, user: IUser) {
-
     return this.companyModel.updateOne(
       { _id: id },
       {

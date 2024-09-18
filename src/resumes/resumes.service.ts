@@ -7,6 +7,7 @@ import { Resume, ResumeDocument } from './schemas/resume.schema';
 import mongoose from 'mongoose';
 import { IUser } from 'src/auth/users.interface';
 import aqp from 'api-query-params';
+import path from 'path';
 
 @Injectable()
 export class ResumesService {
@@ -74,7 +75,10 @@ export class ResumesService {
   }
 
   findOne(id: string) {
-    return this.resumeModel.findById(id);
+    return this.resumeModel
+      .findById(id)
+      .populate({ path: 'companyId' })
+      .populate({ path: 'jobId' });
   }
 
   update(id: string, updateResumeDto: UpdateResumeDto, user: IUser) {
