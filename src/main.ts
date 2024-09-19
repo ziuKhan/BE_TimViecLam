@@ -43,8 +43,7 @@ async function bootstrap() {
     ], //để * là cho tất cả kết nối tới còn để localhost thì chỉ local ý dùng
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     preflightContinue: false,
-    credentials: false,
-    // allowedHeaders:
+    credentials: true,
   });
 
   //config helmet giúp bắt kích hoạt security

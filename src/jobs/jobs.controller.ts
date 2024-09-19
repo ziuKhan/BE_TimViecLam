@@ -35,7 +35,7 @@ export class JobsController {
     @Query('lte') lte: string,
     @Query() qs: string,
   ) {
-    return this.jobsService.findAll(+gte,+lte,+currentPage, +limit, qs);
+    return this.jobsService.findAll(+gte, +lte, +currentPage, +limit, qs);
   }
 
   @Public()
@@ -44,9 +44,6 @@ export class JobsController {
   findOne(@Param('id') id: string) {
     return this.jobsService.findOne(id);
   }
-
-
-
 
   @Patch(':id')
   @ResponseMessage('Update job successfully')

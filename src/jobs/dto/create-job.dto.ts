@@ -6,6 +6,7 @@ import {
   IsNumber,
   IsDate,
   IsBoolean,
+  IsMongoId,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import mongoose from 'mongoose';
@@ -20,12 +21,9 @@ export class CreateJobDto {
   @IsString({ each: true, message: 'Mỗi kỹ năng phải là chuỗi ký tự' })
   skills: string[];
 
-  @IsNotEmpty({ message: 'Vui lòng điền thông tin về công ty' })
-  @IsObject({ message: 'Thông tin công ty phải là một đối tượng' })
-  company: {
-    _id: mongoose.Schema.Types.ObjectId;
-    name: string;
-  };
+  @IsNotEmpty({ message: 'Vui lòng điền companyId' })
+  @IsMongoId({ message: 'Không đúng định dạng ID' })
+  companyId: mongoose.Schema.Types.ObjectId;
 
   @IsNotEmpty({ message: 'Vui lòng điền thông tin về địa điểm' })
   @IsString({ message: 'Địa điểm phải là chuỗi ký tự' })

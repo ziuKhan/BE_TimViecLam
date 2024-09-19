@@ -1,28 +1,5 @@
 import mongoose from 'mongoose';
+import { CreateJobDto } from './create-job.dto';
+import { OmitType, PartialType } from '@nestjs/mapped-types';
 
-export class UpdateJobDto {
-  name: string;
-
-  skills: string[];
-
-  company: {
-    _id: mongoose.Schema.Types.ObjectId;
-    name: string;
-  };
-
-  location: string;
-
-  salary: number;
-
-  quantity: number;
-
-  level: string;
-
-  description: string;
-
-  startDate: Date;
-
-  endDate: Date;
-
-  isActive: boolean;
-}
+export class UpdateJobDto extends PartialType(CreateJobDto) {}

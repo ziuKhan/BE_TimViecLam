@@ -23,7 +23,13 @@ export class JobsService {
     return { _id: createJob._id, createdAt: createJob.createdAt };
   }
 
-  async findAll(gte:number, lte:number, currentPage: number, limit: number, qs: string) {
+  async findAll(
+    gte: number,
+    lte: number,
+    currentPage: number,
+    limit: number,
+    qs: string,
+  ) {
     const { filter, sort, population } = aqp(qs);
 
     delete filter.current;
@@ -31,7 +37,7 @@ export class JobsService {
     delete filter.lte;
     delete filter.pageSize;
 
-  // Chỉ xử lý nếu filter.salary là một đối tượng
+    // Chỉ xử lý nếu filter.salary là một đối tượng
     if (gte && lte) {
       filter.salary = { $gte: gte, $lte: lte };
     } else if (gte) {
@@ -39,8 +45,6 @@ export class JobsService {
     } else if (lte) {
       filter.salary = { $lte: lte };
     }
-
-    
 
     let offset = (+currentPage - 1) * +limit;
     let defaultLimit = +limit ? +limit : 10;
@@ -67,7 +71,10 @@ export class JobsService {
   }
 
   findOne(id: string) {
-    return this.JobModel.findById(id);
+    return this.JobModel.findById(id).populate({
+      path: 'companyId',
+      select: { name: 1, _id: 1, logo: 1 },
+    });
   }
 
   update(id: string, updateJobDto: UpdateJobDto, user: IUser) {

@@ -33,14 +33,20 @@ export class MailController {
 
     for (const subs of subscribers) {
       const subsSkills = subs.skills;
-      const jobWithMatchingSkills = await this.jobModel.find({
-        skills: { $in: subsSkills },
-      });
+      const jobWithMatchingSkills = await this.jobModel
+        .find({
+          skills: { $in: subsSkills },
+        })
+        .populate({
+          path: 'companyId',
+          select: { name: 1, _id: 1, logo: 1 },
+        });
+
       if (jobWithMatchingSkills?.length > 0) {
         const jobs = jobWithMatchingSkills.map((item) => {
           return {
             name: item.name,
-            company: item.company.name,
+            company: (item.companyId as any)?.name,
             salary:
               `${item.salary}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' đ',
 
