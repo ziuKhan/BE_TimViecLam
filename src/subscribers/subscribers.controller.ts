@@ -59,6 +59,7 @@ export class SubscribersController {
   getUserSkills(@User() user: IUser) {
     return this.subscribersService.getSkills(user);
   }
+
   @Get(':id')
   @ResponseMessage('Get Subscribers successfully')
   findOne(@Param('id') id: string) {

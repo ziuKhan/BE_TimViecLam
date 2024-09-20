@@ -40,7 +40,7 @@ export class Subscriber {
 
   @Prop()
   deletedAt: Date;
-
+  
   @Prop()
   isDeleted: boolean;
 }
