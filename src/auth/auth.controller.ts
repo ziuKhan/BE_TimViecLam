@@ -22,6 +22,7 @@ import { RolesService } from 'src/roles/roles.service';
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { CreateCompanyDto } from '../companies/dto/create-company.dto';
+import { GoogleAuthGuard } from './google-auth.guard';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -31,7 +32,6 @@ export class AuthController {
     private roleService: RolesService,
   ) {}
 
-  
   @Public()
   @UseGuards(LocalAuthGuard)
   @ResponseMessage('Login successfully')
@@ -43,6 +43,25 @@ export class AuthController {
   ) {
     return this.authService.login(req.user, response);
   }
+
+  @Public()
+  @Get('google')
+  @UseGuards(GoogleAuthGuard)
+  async googleLogin() {}
+
+  @Public()
+  @ResponseMessage('Login successfully')
+  @Get('google/callback')
+  @UseGuards(GoogleAuthGuard)
+  async googleCallback(
+    @RequestType() req,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const user = req.user;
+    const data = await this.authService.login(user, res)
+    const redirectUrl = `http://localhost:5000/login/${data.access_token}`;
+    return res.redirect(redirectUrl);
+    }
 
   // @UseGuards(JwtAuthGuard)
   // @UseGuards(ThrottlerGuard)

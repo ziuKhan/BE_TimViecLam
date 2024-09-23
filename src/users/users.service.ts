@@ -93,6 +93,13 @@ export class UsersService {
       .populate({ path: 'role', select: { name: 1, _id: 1 } });
   }
 
+  async findOneByEmail(email: string): Promise<UserDocument | null> {
+    return this.userModel.findOne({ email }).populate({
+      path: 'role',
+      select: { name: 1, _id: 1 },
+    });
+  }
+
   async update(id: string, updateUserDto: UpdateUserDto, iUser: IUser) {
     if (updateUserDto.password) {
       updateUserDto.password = await this.hashPassword(updateUserDto.password);
@@ -150,6 +157,35 @@ export class UsersService {
       _id: user?._id,
       createdAt: user?.createdAt,
     };
+  }
+  async registerGoogleUser(googleUser: {
+    name: string;
+    email: string;
+    googleId: string;
+  }) {
+    // Kiểm tra xem người dùng đã tồn tại với email này chưa
+    let user = await this.userModel.findOne({ email: googleUser.email });
+    if (user) {
+      throw new BadRequestException(
+        `Email ${googleUser.email} đã tồn tại, vui lòng sử dụng một email khác.`,
+      );
+    }
+
+    // Tìm vai trò mặc định của người dùng
+    const userRole = await this.roleModel.findOne({ name: USER_ROLE });
+
+    // Tạo người dùng mới
+    user = new this.userModel({
+      name: googleUser.name,
+      email: googleUser.email,
+      googleId: googleUser.googleId,
+      role: userRole?._id,
+      isActive: true,
+    });
+
+    await user.save();
+
+    return user;
   }
 
   async registerHR(registerHRUserDto: RegisterHRUserDto) {

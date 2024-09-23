@@ -12,8 +12,11 @@ export class User {
   @Prop({ required: true, unique: true })
   email: string;
 
-  @Prop({ required: true })
+  @Prop()
   password: string;
+
+  @Prop()
+  googleId: string;
 
   @Prop()
   phoneNumber: string;
@@ -37,7 +40,7 @@ export class User {
     ref: Role.name,
   })
   role: mongoose.Schema.Types.ObjectId;
-  
+
   @Prop()
   refreshToken: string;
 

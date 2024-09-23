@@ -17,16 +17,24 @@ import { RolesService } from 'src/roles/roles.service';
 import { Permission } from 'src/permissions/Schemas/permission.schema';
 import { CompaniesService } from '../companies/companies.service';
 import { CreateCompanyDto } from '../companies/dto/create-company.dto';
+import { OAuth2Client } from 'google-auth-library';
 
 @Injectable()
 export class AuthService {
+  private googleClient: OAuth2Client;
+
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
     private configService: ConfigService,
     private rolesService: RolesService,
     private companiesService: CompaniesService,
-  ) {}
+  ) {
+    this.googleClient = new OAuth2Client(
+      this.configService.get<string>('GOOGLE_CLIENT_ID'),
+      this.configService.get<string>('GOOGLE_CLIENT_SECRET'),
+    );
+  }
 
   async validateUser(username: string, passport: string): Promise<any> {
     const user = await this.usersService.findOneByUsername(username);
@@ -76,6 +84,35 @@ export class AuthService {
         role,
         permissions,
       },
+    };
+  }
+
+  async validateGoogleUser(profile: any): Promise<any> {
+    const { email, name, id } = profile._json;
+
+    // Kiểm tra xem người dùng đã tồn tại hay chưa
+    let user = await this.usersService.findOneByEmail(email);
+    if (!user) {
+      // Nếu chưa, tạo người dùng mới
+      user = await this.usersService.registerGoogleUser({
+        name,
+        email,
+        googleId: id,
+      });
+    }
+
+    const userRole = (await user.role) as unknown as {
+      _id: string;
+      name: string;
+    };
+    const temp = (await this.rolesService.findOne(userRole?._id))?.toObject();
+
+    return {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      permissions: temp?.permissions ?? [],
     };
   }
 

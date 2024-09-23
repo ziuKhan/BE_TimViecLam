@@ -13,11 +13,11 @@ import { AuthController } from './auth.controller';
 import { RolesService } from 'src/roles/roles.service';
 import { RolesModule } from 'src/roles/roles.module';
 import { CompaniesModule } from '../companies/companies.module';
+import { GoogleStrategy } from './passport/google.strategy';
 
 @Module({
   imports: [
     UsersModule,
-    PassportModule,
     RolesModule,
     CompaniesModule,
     JwtModule.registerAsync({
@@ -31,7 +31,7 @@ import { CompaniesModule } from '../companies/companies.module';
       inject: [ConfigService],
     }),
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
+  providers: [AuthService, LocalStrategy, JwtStrategy, GoogleStrategy],
   controllers: [AuthController],
   exports: [AuthService],
 })

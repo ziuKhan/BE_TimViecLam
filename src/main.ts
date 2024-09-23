@@ -9,6 +9,7 @@ import { TransformInterceptor } from './core/transform.interceptor';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import session from 'express-session';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -23,6 +24,16 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
+    }),
+  );
+
+  // Cấu hình session
+  app.use(
+    session({
+      secret: 'your-secret-key', // Đặt khóa bí mật riêng của bạn
+      resave: false,
+      saveUninitialized: false,
+      cookie: { secure: false }, // Đặt `true` nếu chạy trên HTTPS
     }),
   );
 
@@ -43,7 +54,7 @@ async function bootstrap() {
     ], //để * là cho tất cả kết nối tới còn để localhost thì chỉ local ý dùng
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     preflightContinue: false,
-    credentials: false,
+    credentials: true,
   });
 
   //config helmet giúp bắt kích hoạt security
