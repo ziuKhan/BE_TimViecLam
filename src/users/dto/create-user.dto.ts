@@ -35,7 +35,7 @@ export class CreateUserDto {
 
   @IsNotEmpty({ message: 'gender không được để trống' })
   gender: string;
-git
+
   @IsNotEmpty({ message: 'isActive không được để trống' })
   isActive: string;
 

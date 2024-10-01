@@ -59,6 +59,7 @@ export class AuthController {
   ) {
     const user = req.user;
     const data = await this.authService.login(user, res)
+    console.log(data)
     const redirectUrl = `http://localhost:5000/login/${data.access_token}`;
     return res.redirect(redirectUrl);
     }

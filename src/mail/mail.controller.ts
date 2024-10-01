@@ -53,6 +53,7 @@ export class MailController {
             skills: item.skills,
           };
         });
+        
         await this.mailerService.sendMail({
           to: subs.email,
           from: '"ITViec" <itviec@example.com>',

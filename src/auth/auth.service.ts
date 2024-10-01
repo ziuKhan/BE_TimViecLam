@@ -56,6 +56,7 @@ export class AuthService {
 
   async login(user: IUser, response: Response) {
     const { _id, name, email, role, permissions } = user;
+
     const payload = {
       sub: 'token login',
       iss: 'from server',
@@ -88,8 +89,7 @@ export class AuthService {
   }
 
   async validateGoogleUser(profile: any): Promise<any> {
-    const { email, name, id } = profile._json;
-
+    const { email, name, sub } = profile._json;
     // Kiểm tra xem người dùng đã tồn tại hay chưa
     let user = await this.usersService.findOneByEmail(email);
     if (!user) {
@@ -97,16 +97,18 @@ export class AuthService {
       user = await this.usersService.registerGoogleUser({
         name,
         email,
-        googleId: id,
+        googleId: sub,
       });
+      user = await this.usersService.findOneByEmail(email);
     }
 
     const userRole = (await user.role) as unknown as {
       _id: string;
       name: string;
     };
-    const temp = (await this.rolesService.findOne(userRole?._id))?.toObject();
 
+    const temp = (await this.rolesService.findOne(userRole?._id))?.toObject();
+    console.log('check role ->>>>>>>>>',user.role);
     return {
       _id: user._id,
       name: user.name,

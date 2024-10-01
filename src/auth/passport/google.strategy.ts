@@ -10,6 +10,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     private authService: AuthService,
     private configService: ConfigService,
   ) {
+
     super({
       clientID: configService.get<string>('GOOGLE_CLIENT_ID'),
       clientSecret: configService.get<string>('GOOGLE_CLIENT_SECRET'),
@@ -30,7 +31,6 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       done(null, user);
     } catch (error) {
       console.log('error', error);
-
       done(error, false);
     }
   }

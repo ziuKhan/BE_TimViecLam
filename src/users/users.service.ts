@@ -173,7 +173,6 @@ export class UsersService {
 
     // Tìm vai trò mặc định của người dùng
     const userRole = await this.roleModel.findOne({ name: USER_ROLE });
-
     // Tạo người dùng mới
     user = new this.userModel({
       name: googleUser.name,

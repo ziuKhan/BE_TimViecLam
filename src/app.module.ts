@@ -18,6 +18,7 @@ import { MailModule } from './mail/mail.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { HealthModule } from './health/health.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -54,6 +55,8 @@ import { HealthModule } from './health/health.module';
     // ]),
 
     HealthModule,
+
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
