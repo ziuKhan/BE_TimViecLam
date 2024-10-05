@@ -87,4 +87,6 @@ export class SubscribersController {
   remove(@Param('id') id: string, @User() user: IUser) {
     return this.subscribersService.remove(id, user);
   }
+
+  
 }

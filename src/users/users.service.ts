@@ -147,10 +147,12 @@ export class UsersService {
     registerUserDto.password = await this.hashPassword(
       registerUserDto.password,
     );
+
     //create a new user
     let user = await this.userModel.create({
       ...registerUserDto,
       role: userRole?._id,
+      avatar: 'avatar_user.svg',
     });
 
     return {
@@ -178,6 +180,7 @@ export class UsersService {
       name: googleUser.name,
       email: googleUser.email,
       googleId: googleUser.googleId,
+      avatar: 'avatar_user.svg',
       role: userRole?._id,
       isActive: true,
     });
@@ -207,6 +210,7 @@ export class UsersService {
     let user = await this.userModel.create({
       ...registerHRUserDto,
       role: userRole?._id,
+      avatar: 'avatar_user.svg',
       isActive: false,
     });
 

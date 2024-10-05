@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
+  IsBoolean,
   IsEmail,
   IsMongoId,
   IsNotEmpty,
@@ -30,14 +31,21 @@ export class CreateUserDto {
   @IsNotEmpty({ message: 'name không được để trống' })
   name: string;
 
+  @IsString({ message: 'address phải là chuỗi ký tự' })
   @IsNotEmpty({ message: 'address không được để trống' })
   address: string;
 
+  @IsString({ message: 'gender phải là chuỗi ký tự' })
   @IsNotEmpty({ message: 'gender không được để trống' })
   gender: string;
 
   @IsNotEmpty({ message: 'isActive không được để trống' })
-  isActive: string;
+  @IsBoolean()
+  isActive: boolean;
+
+  @IsNotEmpty({ message: 'isActive không được để trống' })
+  @IsString({ message: 'isActive phải là chuỗi ký tự' })
+  avatar: string;
 
   @IsMongoId({ each: true, message: 'permissions là 1 objectID trong mongo' })
   @IsNotEmpty({ message: 'role không được để trống' })
@@ -55,6 +63,9 @@ export class RegisterUserDto {
   @IsEmail({}, { message: 'Email không hợp lệ a@a.a' })
   email: string;
 
+  @IsString()
+  avatar: string;
+  
   @IsNotEmpty({ message: 'Password không được để trống' })
   password: string;
 
@@ -75,6 +86,9 @@ export class RegisterHRUserDto {
 
   @IsNotEmpty({ message: 'phoneNumber không được để trống' })
   phoneNumber: string;
+
+  @IsString()
+  avatar: string;
 
   @IsNotEmptyObject()
   @IsObject()

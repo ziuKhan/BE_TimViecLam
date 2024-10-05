@@ -25,11 +25,17 @@ export class Notification {
   isRead: boolean; // Trạng thái đã đọc
 
   //----------------------------------
-  @Prop({ type: Object })
+  @Prop({
+    type: {
+      _id: { type: mongoose.Schema.Types.ObjectId, ref: User.name },
+      email: { type: String },
+    }
+  })
   createdBy: {
     _id: mongoose.Schema.Types.ObjectId;
     email: string;
   };
+  
 
   @Prop({ type: Object })
   updatedBy: {

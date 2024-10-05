@@ -55,12 +55,14 @@ export class AuthService {
   }
 
   async login(user: IUser, response: Response) {
-    const { _id, name, email, role, permissions } = user;
+    const { _id, name, email, role, permissions, avatar } = user;
     const payload = {
       sub: 'token login',
       iss: 'from server',
       _id,
       name,
+      avatar,
+
       email,
       role,
     };
@@ -82,6 +84,7 @@ export class AuthService {
         name,
         email,
         role,
+        avatar,
         permissions,
       },
     };
@@ -112,6 +115,7 @@ export class AuthService {
       _id: user._id,
       name: user.name,
       email: user.email,
+      avatar: user.avatar,
       role: user.role,
       permissions: temp?.permissions ?? [],
     };
@@ -144,12 +148,13 @@ export class AuthService {
 
       let user = await this.usersService.findUserByToken(reference);
       if (user) {
-        const { _id, name, email, role } = user;
+        const { _id, name, email, role, avatar } = user;
         const payload = {
           sub: 'token refresh',
           iss: 'from server',
           _id,
           name,
+          avatar,
           email,
           role,
         };
@@ -174,6 +179,8 @@ export class AuthService {
             _id,
             name,
             email,
+          avatar,
+
             role,
             permissions: temp?.permissions ?? [],
           },

@@ -23,13 +23,11 @@ export class NotificationsGateway {
   @WebSocketServer()  server: Server;
   constructor(private readonly notificationsService: NotificationsService) {}
 
-
-
+  
   @SubscribeMessage('notification')
   async sendNotificationToAllUsers(notification: any) {
     return this.server.emit('notification', notification);
   }
   
-
 
 }

@@ -29,6 +29,9 @@ export class User {
   @Prop()
   isActive: boolean;
 
+  @Prop()
+  avatar: string;
+  
   @Prop({ type: Object })
   company: {
     _id: mongoose.Schema.Types.ObjectId;

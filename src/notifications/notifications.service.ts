@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import { UpdateNotificationDto } from './dto/update-notification.dto';
 import { IUser } from '../auth/users.interface';
@@ -12,12 +12,12 @@ import { unregisterDecorator } from 'handlebars/runtime';
 export class NotificationsService {
   constructor(
     @InjectModel(Notification.name)
-    private NotificationModel: SoftDeleteModel<NotificationDocument>,
+    private notificationModel: SoftDeleteModel<NotificationDocument>,
   ) {}
 
 
   async create(createNotificationDto: CreateNotificationDto, user: IUser) {
-    const createJob = await this.NotificationModel.create({
+    const createJob = await this.notificationModel.create({
       ...createNotificationDto,
       createdBy: { _id: user._id, email: user.email },
     });
@@ -50,16 +50,17 @@ export class NotificationsService {
     let offset = (+currentPage - 1) * +limit;
     let defaultLimit = +limit ? +limit : 10;
 
-    const totalItems = (await this.NotificationModel.find(filter)).length;
+    const totalItems = (await this.notificationModel.find(filter)).length;
     const totalPages = Math.ceil(totalItems / defaultLimit);
 
-    const result = await this.NotificationModel.find(filter)
+    const result = await this.notificationModel.find(filter)
       .skip(offset)
       .limit(defaultLimit)
       .sort(sort as any)
       .populate(population)
+      .populate({ path: 'createdBy._id', select: 'email name avatar' })
       .exec();
-
+    
     return {
       meta: {
         current: currentPage, //trang hiện tại
@@ -72,11 +73,11 @@ export class NotificationsService {
   }
 
   findOne(id: string) {
-    return this.NotificationModel.findById(id);
+    return this.notificationModel.findById(id);
   }
 
   update(id: string, updateNotificationDto: UpdateNotificationDto, user: IUser) {
-    return this.NotificationModel.updateOne(
+    return this.notificationModel.updateOne(
       { _id: id },
       {
         ...updateNotificationDto,
@@ -86,11 +87,14 @@ export class NotificationsService {
   }
 
   async remove(id: string, user: IUser) {
-    await this.NotificationModel.updateOne(
+    const notification = await this.notificationModel.findById(id);
+    if (!notification) throw new BadRequestException('ID Không tồn tại');
+
+    await this.notificationModel.updateOne(
       { _id: id },
       { deletedBy: { _id: user._id, email: user.email } },
     );
 
-    return this.NotificationModel.softDelete({ _id: id });
+    return this.notificationModel.softDelete({ _id: id });
   }
 }

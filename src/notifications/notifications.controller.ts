@@ -28,10 +28,10 @@ import { NotificationsGateway } from './notifications.gateway';
     @ResponseMessage('Create job successfully')
     async create(@Body() createNotificationDto: CreateNotificationDto, @User() user: IUser) {
       const createJob = await this.notificationsService.create(createNotificationDto, user);
-      this.notificationsGateway.sendNotificationToAllUsers(createJob);
+      this.notificationsGateway.sendNotificationToAllUsers("Create successfully");
       return createJob;
     }
-
+    
     @Get()
     @ResponseMessage('Get list job successfully')
     findAll(
@@ -58,7 +58,7 @@ import { NotificationsGateway } from './notifications.gateway';
       @User() user: IUser,
     ) {
       const updateJob = this.notificationsService.update(id, updateNotificationDto, user);
-      this.notificationsGateway.sendNotificationToAllUsers(updateJob);
+      this.notificationsGateway.sendNotificationToAllUsers("update successfully");
       return updateJob
     }
 
@@ -66,7 +66,7 @@ import { NotificationsGateway } from './notifications.gateway';
     @ResponseMessage('Delete job successfully')
     remove(@Param('id') id: string, @User() user: IUser) {
       const remove = this.notificationsService.remove(id, user);
-      this.notificationsGateway.sendNotificationToAllUsers(remove);
+      this.notificationsGateway.sendNotificationToAllUsers("delete successfully");
       return remove
     }
 

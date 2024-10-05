@@ -20,7 +20,6 @@ export class CreateNotificationDto {
   @IsString({  message: 'Nội dùng thông báo phải là chuỗi ký tự' })
   message: string;
 
-  @IsMongoId({ message: 'Không đúng định dạng ID' })
   userId: mongoose.Schema.Types.ObjectId;
 
   @IsNotEmpty({ message: 'Vui lòng nhập type' })
