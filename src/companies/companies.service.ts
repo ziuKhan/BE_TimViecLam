@@ -35,7 +35,8 @@ export class CompaniesService {
   }
 
   async findJobs(id: string) {
-    return this.jobModel.countDocuments({ 'company._id': id }).exec();
+
+    return await this.jobModel.countDocuments({ 'companyId': id }).exec()
   }
 
   async findAll(currentPage: number, limit: number, qs: string) {
