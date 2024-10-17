@@ -34,7 +34,7 @@ Dự án này vẫn đang được hoàn thiện. Tôi đang tích cực làm vi
 
 1. Clone repository:
    ```
-   git clone <đường dẫn repository của bạn>
+   git clone https://github.com/ndkag/DA4_NestJS_TimViecLam.git
    ```
 
 2. Di chuyển vào thư mục dự án:
@@ -63,7 +63,7 @@ Tạo file .env trong thư mục gốc của dự án và cấu hình các biế
 - JWT_SECRET=<Khóa bí mật cho JWT>
 - GOOGLE_CLIENT_ID=<ID ứng dụng Google OAuth>
 - GOOGLE_CLIENT_SECRET=<Secret ứng dụng Google OAuth>
-    
+
 ## API Documentation
 
 Sau khi khởi chạy ứng dụng, bạn có thể truy cập tài liệu API Swagger tại:
