@@ -1,4 +1,4 @@
-import { IsMongoId, IsNotEmpty } from 'class-validator';
+import { IsMongoId, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import mongoose from 'mongoose';
 
 export class CreateResumeDto {
@@ -14,6 +14,9 @@ export class CreateResumeDto {
 
   @IsNotEmpty({ message: 'Vui lòng điền status' })
   status: string;
+
+  @IsString({ message: 'Không đúng định dạng' })
+  description?: string;
 
   @IsNotEmpty({ message: 'Vui lòng điền companyId' })
   @IsMongoId({ message: 'Không đúng định dạng ID' })
@@ -34,6 +37,8 @@ export class CreateUserCVDto {
   @IsMongoId({ message: 'Không đúng định dạng ID' })
   companyId: mongoose.Schema.Types.ObjectId;
 
+  @IsOptional()
+  description?: string;
   @IsNotEmpty({ message: 'Vui lòng điền jobId' })
   @IsMongoId({ message: 'Không đúng định dạng ID' })
   jobId: mongoose.Schema.Types.ObjectId;

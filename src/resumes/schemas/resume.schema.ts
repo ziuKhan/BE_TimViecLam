@@ -9,12 +9,19 @@ export type ResumeDocument = HydratedDocument<Resume>;
 export class Resume {
   @Prop()
   email: string;
+
   @Prop()
   userId: mongoose.Schema.Types.ObjectId;
+
   @Prop()
   url: string;
+
   @Prop()
   status: string;
+
+  @Prop()
+  description: string;
+
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: Company.name })
   companyId: mongoose.Schema.Types.ObjectId;
 

@@ -21,6 +21,7 @@ import { Server, Socket } from 'socket.io';
 })
 export class NotificationsGateway {
   @WebSocketServer()  server: Server;
+  private userSockets = new Map<string, Socket>();
   constructor(private readonly notificationsService: NotificationsService) {}
 
   
@@ -30,4 +31,24 @@ export class NotificationsGateway {
   }
   
 
+  handleConnection(client: Socket) {
+    const userId = client.handshake.query.userId as string;
+    if (userId) {
+      this.userSockets.set(userId, client);
+    }
+  }
+
+  handleDisconnect(client: Socket) {
+    const userId = client.handshake.query.userId as string;
+    if (userId) {
+      this.userSockets.delete(userId);
+    }
+  }
+
+  sendNotificationToUser(userId: any, notification: any) {
+    const userSocket = this.userSockets.get(userId);
+    if (userSocket) {
+      userSocket.emit('notification', notification);
+    }
+  }
 }

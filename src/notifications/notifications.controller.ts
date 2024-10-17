@@ -23,7 +23,7 @@ import { NotificationsGateway } from './notifications.gateway';
         private readonly notificationsService: NotificationsService,
         private readonly notificationsGateway: NotificationsGateway,
     ) {}
-  
+
     @Post()
     @ResponseMessage('Create job successfully')
     async create(@Body() createNotificationDto: CreateNotificationDto, @User() user: IUser) {
@@ -31,7 +31,19 @@ import { NotificationsGateway } from './notifications.gateway';
       this.notificationsGateway.sendNotificationToAllUsers("Create successfully");
       return createJob;
     }
-    
+
+    @Post('user')
+    @ResponseMessage('Tạo thông báo thành công')
+    async createByUser(@Body() createNotificationDto: CreateNotificationDto, @User() user: IUser) {
+      const createdNotification = await this.notificationsService.create(createNotificationDto, user);
+      // Gửi thông báo cho người dùng cụ thể
+      this.notificationsGateway.sendNotificationToUser(
+        createNotificationDto.userId,
+        "Thông báo mới đã được tạo"
+      );
+      return createdNotification;
+    }
+
     @Get()
     @ResponseMessage('Get list job successfully')
     findAll(
