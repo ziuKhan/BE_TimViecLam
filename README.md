@@ -1,4 +1,4 @@
-# Dự án NestJS - Hệ thống Quản lý Công việc
+# Dự án Tìm Việc Làm - Backend NestJS
 
 ## Giới thiệu
 
@@ -57,6 +57,7 @@ Dự án này vẫn đang được hoàn thiện. Tôi đang tích cực làm vi
 ## Cấu hình
 
 Tạo file .env trong thư mục gốc của dự án và cấu hình các biến môi trường sau:
+
 PORT=3000
 MONGODB_URI=<URI kết nối MongoDB của bạn>
 JWT_SECRET=<Khóa bí mật cho JWT>
