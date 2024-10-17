@@ -58,12 +58,12 @@ Dự án này vẫn đang được hoàn thiện. Tôi đang tích cực làm vi
 
 Tạo file .env trong thư mục gốc của dự án và cấu hình các biến môi trường sau:
 
-PORT=3000
-MONGODB_URI=<URI kết nối MongoDB của bạn>
-JWT_SECRET=<Khóa bí mật cho JWT>
-GOOGLE_CLIENT_ID=<ID ứng dụng Google OAuth>
-GOOGLE_CLIENT_SECRET=<Secret ứng dụng Google OAuth>
-
+- PORT=3000
+- MONGODB_URI=<URI kết nối MongoDB của bạn>
+- JWT_SECRET=<Khóa bí mật cho JWT>
+- GOOGLE_CLIENT_ID=<ID ứng dụng Google OAuth>
+- GOOGLE_CLIENT_SECRET=<Secret ứng dụng Google OAuth>
+    
 ## API Documentation
 
 Sau khi khởi chạy ứng dụng, bạn có thể truy cập tài liệu API Swagger tại:
