@@ -14,6 +14,7 @@ import { UpdateCompanyDto } from './dto/update-company.dto';
 import { IUser } from 'src/auth/users.interface';
 import { Public, ResponseMessage, User } from 'src/decorator/customize';
 import { ApiTags } from '@nestjs/swagger';
+import { Company } from './schemas/company.schema';
 
 @ApiTags('Companies')
 @Controller('companies')
@@ -25,14 +26,14 @@ export class CompaniesController {
     return this.companiesService.create(createCompanyDto, user);
   }
 
-  @Public()
   @Get()
+  @Public()
   @ResponseMessage('Get list companies successfully')
   findAll(
     @Query('current') currentPage: string,
     @Query('pageSize') limit: string,
     @Query() qs: string,
-  ) {
+  ): Promise<{ meta: { current: number; pageSize: number; pages: number; total: number; }; result: Company[] }> {
     return this.companiesService.findAll(+currentPage, +limit, qs);
   }
 
