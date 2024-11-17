@@ -62,7 +62,6 @@ export class AuthService {
       _id,
       name,
       avatar,
-
       email,
       role,
     };
@@ -110,7 +109,6 @@ export class AuthService {
     };
 
     const temp = (await this.rolesService.findOne(userRole?._id))?.toObject();
-    console.log('check role ->>>>>>>>>',user.role);
     return {
       _id: user._id,
       name: user.name,

@@ -37,6 +37,10 @@ export class JobsService {
     delete filter.lte;
     delete filter.pageSize;
 
+    if (filter.endDate) {
+      filter.endDate = { $gte: new Date(filter.endDate) }; 
+    }
+
     // Chỉ xử lý nếu filter.salary là một đối tượng
     if (gte && lte) {
       filter.salary = { $gte: gte, $lte: lte };
@@ -45,7 +49,7 @@ export class JobsService {
     } else if (lte) {
       filter.salary = { $lte: lte };
     }
-
+    
     let offset = (+currentPage - 1) * +limit;
     let defaultLimit = +limit ? +limit : 10;
 

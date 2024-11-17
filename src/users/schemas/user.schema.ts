@@ -31,7 +31,7 @@ export class User {
 
   @Prop()
   avatar: string;
-  
+
   @Prop({ type: Object })
   company: {
     _id: mongoose.Schema.Types.ObjectId;

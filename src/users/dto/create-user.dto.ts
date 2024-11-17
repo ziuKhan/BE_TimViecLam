@@ -39,21 +39,13 @@ export class CreateUserDto {
   @IsNotEmpty({ message: 'gender không được để trống' })
   gender: string;
 
-  @IsNotEmpty({ message: 'isActive không được để trống' })
   @IsBoolean()
   isActive: boolean;
-
-  @IsNotEmpty({ message: 'isActive không được để trống' })
-  @IsString({ message: 'isActive phải là chuỗi ký tự' })
-  avatar: string;
 
   @IsMongoId({ each: true, message: 'permissions là 1 objectID trong mongo' })
   @IsNotEmpty({ message: 'role không được để trống' })
   role: string;
 
-  @IsNotEmptyObject()
-  @IsObject()
-  @ValidateNested()
   @Type(() => Company)
   company!: Company;
 }

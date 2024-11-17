@@ -15,7 +15,6 @@ export class Role {
 
   @Prop({ type: [mongoose.Schema.Types.ObjectId], ref: Permission.name })
   permissions: Permission[];
-
   //----------------------------------
 
   //----------------------------------
