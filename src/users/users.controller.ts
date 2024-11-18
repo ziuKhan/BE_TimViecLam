@@ -24,7 +24,7 @@ export class UsersController {
   @Public()
   @ResponseMessage('Create user successfully!')
   create(@Body() createUserDto: CreateUserDto, @User() user: IUser) {
-    return this.usersService.create(createUserDto, user);
+    return this.usersService.create(createUserDto, user); 
   }
 
   @Get()

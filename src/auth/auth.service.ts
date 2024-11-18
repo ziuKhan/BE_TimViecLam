@@ -45,17 +45,20 @@ export class AuthService {
     ) {
       const userRole = user.role as unknown as { _id: string; name: string };
       const temp = await this.rolesService.findOne(userRole._id);
-
+      console.log(user);
       return {
         ...user.toObject(),
         permissions: temp?.permissions ?? [],
+        companyId: user.company?._id,
       };
+
     }
     return null;
   }
 
   async login(user: IUser, response: Response) {
-    const { _id, name, email, role, permissions, avatar } = user;
+    const { _id, name, email, role, permissions, avatar, companyId } = user;
+    const filteredPermissions = permissions.map(({ _id, apiPath, method }) => ({ _id, apiPath, method }));
     const payload = {
       sub: 'token login',
       iss: 'from server',
@@ -64,6 +67,7 @@ export class AuthService {
       avatar,
       email,
       role,
+      companyId,
     };
     const refresh_Token = await this.createRefreshToken(payload);
 
@@ -84,7 +88,8 @@ export class AuthService {
         email,
         role,
         avatar,
-        permissions,
+        companyId,
+        permissions: filteredPermissions,
       },
     };
   }
@@ -115,6 +120,7 @@ export class AuthService {
       email: user.email,
       avatar: user.avatar,
       role: user.role,
+      companyId: user.company?._id,
       permissions: temp?.permissions ?? [],
     };
   }
@@ -154,6 +160,7 @@ export class AuthService {
           name,
           avatar,
           email,
+          companyId: user.company?._id,
           role,
         };
         const refresh_Token = await this.createRefreshToken(payload);
@@ -177,9 +184,9 @@ export class AuthService {
             _id,
             name,
             email,
-          avatar,
-
+            avatar,
             role,
+            companyId: user.company?._id,
             permissions: temp?.permissions ?? [],
           },
         };

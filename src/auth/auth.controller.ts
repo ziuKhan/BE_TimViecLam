@@ -69,8 +69,11 @@ export class AuthController {
   @Get('/account')
   async getAccount(@User() user: IUser) {
     const temp = (await this.roleService.findOne(user.role._id)) as any;
-    user.permissions = temp.permissions;
-    return user;
+    user.permissions = temp.permissions.map(({ _id, apiPath, method }) => ({ _id, apiPath, method }));
+    return {
+        ...user,
+        companyId: user.companyId,
+    };
   }
 
   @ResponseMessage('Get User by access token')

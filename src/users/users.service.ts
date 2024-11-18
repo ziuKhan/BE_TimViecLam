@@ -27,8 +27,9 @@ export class UsersService {
   hashPassword(password: string) {
     return bcryptJS.hashSync(password, 10);
   }
-
+  
   async create(createUserDt: CreateUserDto, iuser: IUser) {
+    console.log(createUserDt);
     if (
       await this.userModel.findOne({
         email: createUserDt.email,

@@ -36,6 +36,7 @@ export class SubscribersController {
 
   @Post('create-or-update')
   @ResponseMessage('Successfully')
+  @Public()
   createOrUpdate(
     @Body() createSubscribersDto: CreateSubscriberDto,
     @User() user: IUser,
@@ -68,6 +69,7 @@ export class SubscribersController {
 
   @Get('/email/:id')
   @ResponseMessage('Get Subscribers successfully')
+  @Public()
   findOneByEmail(@Param('id') email: string) {
     return this.subscribersService.findOneByEmail(email);
   }

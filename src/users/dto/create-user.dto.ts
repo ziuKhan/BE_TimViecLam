@@ -7,17 +7,18 @@ import {
   IsNotEmpty,
   IsNotEmptyObject,
   IsObject,
+  IsOptional,
   IsString,
   ValidateNested,
 } from 'class-validator';
 import mongoose from 'mongoose';
 
 class Company {
-  @IsNotEmpty({ message: '_id không được để trống' })
-  _id: mongoose.Schema.Types.ObjectId;
-
-  @IsNotEmpty({ message: 'name không được để trống' })
-  name: string;
+  @IsOptional() 
+  _id!: mongoose.Schema.Types.ObjectId;
+  
+  @IsOptional() 
+  name!: string;
 }
 
 export class CreateUserDto {
@@ -46,6 +47,7 @@ export class CreateUserDto {
   @IsNotEmpty({ message: 'role không được để trống' })
   role: string;
 
+  @IsOptional()
   @Type(() => Company)
   company!: Company;
 }

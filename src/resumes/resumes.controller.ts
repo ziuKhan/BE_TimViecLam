@@ -11,7 +11,7 @@ import {
 import { ResumesService } from './resumes.service';
 import { CreateResumeDto, CreateUserCVDto } from './dto/create-resume.dto';
 import { UpdateResumeDto } from './dto/update-resume.dto';
-import { ResponseMessage, User } from 'src/decorator/customize';
+import { Public, ResponseMessage, User } from 'src/decorator/customize';
 import { IUser } from 'src/auth/users.interface';
 import { ApiTags } from '@nestjs/swagger';
 
@@ -28,6 +28,7 @@ export class ResumesController {
 
   @ResponseMessage('Get all resumes successfully')
   @Get()
+  @Public()
   findAll(
     @Query('current') currentPage: string,
     @Query('pageSize') limit: string,
