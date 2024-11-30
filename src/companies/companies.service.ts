@@ -39,7 +39,7 @@ export class CompaniesService {
     return await this.jobModel.countDocuments({ 'companyId': id }).exec()
   }
 
-  async findAll(currentPage: number, limit: number, qs: string) {
+  async findAll(currentPage: number, limit: number, qs: string): Promise<{ meta: { current: number; pageSize: number; pages: number; total: number; }; result: Company[] }> {
     const { filter, sort, population } = aqp(qs);
 
     delete filter.current;
