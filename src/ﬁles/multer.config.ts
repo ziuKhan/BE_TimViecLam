@@ -65,6 +65,7 @@ export class MulterConfigService implements MulterOptionsFactory {
           'gif',
           'pdf',
           'doc',
+          'webp',
           'docx',
         ];
         const fileExtension = file.originalname.split('.').pop().toLowerCase();

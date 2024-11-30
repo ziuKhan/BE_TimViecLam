@@ -45,7 +45,6 @@ export class AuthService {
     ) {
       const userRole = user.role as unknown as { _id: string; name: string };
       const temp = await this.rolesService.findOne(userRole._id);
-      console.log(user);
       return {
         ...user.toObject(),
         permissions: temp?.permissions ?? [],

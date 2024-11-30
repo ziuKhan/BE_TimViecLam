@@ -29,7 +29,6 @@ export class UsersService {
   }
   
   async create(createUserDt: CreateUserDto, iuser: IUser) {
-    console.log(createUserDt);
     if (
       await this.userModel.findOne({
         email: createUserDt.email,

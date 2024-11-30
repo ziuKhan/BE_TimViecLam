@@ -50,6 +50,10 @@ export class CreateUserDto {
   @IsOptional()
   @Type(() => Company)
   company!: Company;
+
+  @IsOptional()
+  @IsString()
+  avatar: string;
 }
 
 export class RegisterUserDto {
