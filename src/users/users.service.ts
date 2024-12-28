@@ -231,12 +231,14 @@ export class UsersService {
     objectPass: { password: string; newPassword: string },
     iUser: IUser,
   ) {
-    if (!mongoose.Types.ObjectId.isValid(iUser._id)) return 'Not found';
+    if(!this.userModel.findOne({ _id: iUser._id})){
+      throw new BadRequestException('Tài khoản không tồn tại');
+    }
     const user: any = await this.userModel.findOne({ _id: iUser._id });
 
     if (await this.isValidPassword(objectPass.password, user.password)) {
       return this.userModel.updateOne(
-        { _id: user._id },
+        { _id: iUser._id },
         { password: this.hashPassword(objectPass.newPassword) },
       );
     } else {

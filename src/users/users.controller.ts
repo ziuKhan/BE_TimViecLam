@@ -21,7 +21,6 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  @Public()
   @ResponseMessage('Create user successfully!')
   create(@Body() createUserDto: CreateUserDto, @User() user: IUser) {
     return this.usersService.create(createUserDto, user); 
@@ -38,10 +37,15 @@ export class UsersController {
   }
 
   @Public()
+  @Get('/public/:id')
+  @ResponseMessage('Fetch user by id')
+  findOnePublic(@Param('id') id: string) {
+    return this.usersService.findOne(id); 
+  }
   @Get(':id')
   @ResponseMessage('Fetch user by id')
   findOne(@Param('id') id: string) {
-    return this.usersService.findOne(id); //dấu + là đang chuyển string sang number nhưng ko cần vì muốn giữ string
+    return this.usersService.findOne(id); 
   }
 
   @ResponseMessage('Update user successfully!')
@@ -53,19 +57,28 @@ export class UsersController {
   ) {
     return this.usersService.update(id, updateUserDto, user);
   }
-
+  @ResponseMessage('Update user successfully!')
+  @Patch('/public/:id')
+  updatePublic(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+    @User() user: IUser,
+  ) {
+    return this.usersService.update(id, updateUserDto, user);
+  }
   @ResponseMessage('Update user successfully!')
   @Delete(':id')
   remove(@Param('id') id: string, @User() user: IUser) {
     return this.usersService.remove(id, user);
   }
 
-  @Patch('/change-password')
+  @Post('/change-password')
   @ResponseMessage('Change password user successfully!')
   changePassword(
     @Body() objectPass: { password: string; newPassword: string },
-    @User() iUser: IUser,
+    @User() user: IUser,
   ) {
-    return this.usersService.changePassword(objectPass, iUser);
+    return this.usersService.changePassword(objectPass, user);
   }
 }
+ 

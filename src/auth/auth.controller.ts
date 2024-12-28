@@ -32,10 +32,10 @@ export class AuthController {
     private roleService: RolesService,
   ) {}
 
-  @Public()
   @UseGuards(LocalAuthGuard)
   @ResponseMessage('Login successfully')
   @ApiBody({ type: UserLoginDto })
+  @Public()
   @Post('/login')
   handleLogin(
     @RequestType() req,

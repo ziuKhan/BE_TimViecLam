@@ -31,7 +31,7 @@ export class JobsService {
     qs: string,
   ) {
     const { filter, sort, population } = aqp(qs);
-
+ 
     delete filter.current;
     delete filter.gte;
     delete filter.lte;
@@ -39,7 +39,7 @@ export class JobsService {
 
     if (filter.endDate) {
       filter.endDate = { $gte: new Date(filter.endDate) }; 
-    }
+    } 
 
     // Chỉ xử lý nếu filter.salary là một đối tượng
     if (gte && lte) {

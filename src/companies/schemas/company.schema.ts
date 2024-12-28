@@ -8,7 +8,17 @@ export class Company {
   @Prop()
   name: string;
   @Prop()
-  address: string;
+  province: string;
+  @Prop()
+  district: string;
+  @Prop()
+  ward: string;
+  @Prop()
+  detailedAddress: string;
+  @Prop()
+  fullAddress: string;
+  @Prop({ type: Array })
+  address: string[];
   @Prop()
   description: string;
   @Prop()
