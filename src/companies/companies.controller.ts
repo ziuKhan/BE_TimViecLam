@@ -26,8 +26,17 @@ export class CompaniesController {
     return this.companiesService.create(createCompanyDto, user);
   }
 
-  @Get()
+  @Get('/client')
   @Public()
+  @ResponseMessage('Get list companies successfully')
+  findAllClient(
+    @Query('current') currentPage: string,
+    @Query('pageSize') limit: string,
+    @Query() qs: string,
+  ): Promise<{ meta: { current: number; pageSize: number; pages: number; total: number; }; result: Company[] }> {
+    return this.companiesService.findAll(+currentPage, +limit, qs);
+  }
+  @Get()
   @ResponseMessage('Get list companies successfully')
   findAll(
     @Query('current') currentPage: string,
@@ -39,11 +48,15 @@ export class CompaniesController {
 
   @Public()
   @ResponseMessage('Fetch company by id')
+  @Get('/client/:id')
+  findOneClient(@Param('id') id: string) {
+    return this.companiesService.findOne(id);
+  }
+  @ResponseMessage('Fetch company by id')
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.companiesService.findOne(id);
   }
-
   @ResponseMessage('Update company successfully!')
   @Patch(':id')
   update(

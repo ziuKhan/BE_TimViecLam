@@ -34,16 +34,14 @@ export class SubscribersController {
     return this.subscribersService.create(createSubscribersDto, user);
   }
 
-  @Post('create-or-update')
+  @Post('client')
   @ResponseMessage('Successfully')
-  @Public()
-  createOrUpdate(
+  createOrUpdateCLient(
     @Body() createSubscribersDto: CreateSubscriberDto,
     @User() user: IUser,
   ) {
     return this.subscribersService.createOrUpdate(createSubscribersDto, user);
   }
-
   @Get()
   @ResponseMessage('Get list Subscribers successfully')
   findAll(
@@ -67,21 +65,21 @@ export class SubscribersController {
     return this.subscribersService.findOne(id);
   }
 
-  @Get('/email/:id')
+  @Get('/client')
   @ResponseMessage('Get Subscribers successfully')
-  @Public()
-  findOneByEmail(@Param('id') email: string) {
-    return this.subscribersService.findOneByEmail(email);
+  findOneByEmailClient(@User() user: IUser) {
+    return this.subscribersService.findOneByEmail(user.email);
   }
 
-  @Patch()
+  @Patch(':id')
   @SkipCheckPermission()
   @ResponseMessage('Update Subscribers successfully')
   update(
     @Body() updateSubscribersDto: UpdateSubscriberDto,
     @User() user: IUser,
+    @Param('id') email: string,
   ) {
-    return this.subscribersService.update(updateSubscribersDto, user);
+    return this.subscribersService.update(updateSubscribersDto, user,email);
   }
 
   @Delete(':id')

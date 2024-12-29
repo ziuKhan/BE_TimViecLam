@@ -19,7 +19,7 @@ export class SubscribersService {
     if (
       await this.SubscriberModel.findOne({ email: createSubscriberDto.email })
     ) {
-      return await this.update(createSubscriberDto, user);
+      return await this.update(createSubscriberDto, user, user.email);
     } else {
       return await this.create(createSubscriberDto, user);
     }
@@ -82,9 +82,9 @@ export class SubscribersService {
     return this.SubscriberModel.findOne({ email: email });
   }
 
-  update(updateSubscriberDto: UpdateSubscriberDto, user: IUser) {
+  update(updateSubscriberDto: UpdateSubscriberDto, user: IUser, email: string) {
     return this.SubscriberModel.updateOne(
-      { email: user.email },
+      { email: email },
       {
         ...updateSubscriberDto,
         updatedBy: { _id: user._id, email: user.email },

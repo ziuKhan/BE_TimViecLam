@@ -25,8 +25,19 @@ export class JobsController {
     return this.jobsService.create(createJobDto, user);
   }
 
-  @Get()
+  @Get('client')
   @Public()
+  @ResponseMessage('Get list job successfully')
+  findAllClient(
+    @Query('current') currentPage: string,
+    @Query('pageSize') limit: string,
+    @Query('gte') gte: string,
+    @Query('lte') lte: string,
+    @Query() qs: string,
+  ) {
+    return this.jobsService.findAll(+gte, +lte, +currentPage, +limit, qs);
+  }
+  @Get()
   @ResponseMessage('Get list job successfully')
   findAll(
     @Query('current') currentPage: string,
@@ -37,14 +48,17 @@ export class JobsController {
   ) {
     return this.jobsService.findAll(+gte, +lte, +currentPage, +limit, qs);
   }
-
   @Public()
+  @Get('client/:id')
+  @ResponseMessage('Get job successfully')
+  findOneClient(@Param('id') id: string) {
+    return this.jobsService.findOne(id);
+  }
   @Get(':id')
   @ResponseMessage('Get job successfully')
   findOne(@Param('id') id: string) {
     return this.jobsService.findOne(id);
   }
-
   @Patch(':id')
   @ResponseMessage('Update job successfully')
   update(

@@ -37,9 +37,9 @@ export class UsersController {
   }
 
   @Public()
-  @Get('/public/:id')
+  @Get('/client/:id')
   @ResponseMessage('Fetch user by id')
-  findOnePublic(@Param('id') id: string) {
+  findOneClient(@Param('id') id: string) {
     return this.usersService.findOne(id); 
   }
   @Get(':id')
@@ -58,8 +58,8 @@ export class UsersController {
     return this.usersService.update(id, updateUserDto, user);
   }
   @ResponseMessage('Update user successfully!')
-  @Patch('/public/:id')
-  updatePublic(
+  @Patch('/client/:id')
+  updateClient(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
     @User() user: IUser,

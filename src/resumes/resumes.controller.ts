@@ -25,10 +25,23 @@ export class ResumesController {
   create(@Body() createUserCVDto: CreateUserCVDto, @User() user: IUser) {
     return this.resumesService.create(createUserCVDto, user);
   }
-
+  @ResponseMessage('Create resume successfully')
+  @Post('client')
+  createClient(@Body() createUserCVDto: CreateUserCVDto, @User() user: IUser) {
+    return this.resumesService.create(createUserCVDto, user);
+  }
+  @ResponseMessage('Get all resumes successfully')
+  @Get('client')
+  @Public()
+  findAllClient(
+    @Query('current') currentPage: string,
+    @Query('pageSize') limit: string,
+    @Query() qs: string,
+  ) {
+    return this.resumesService.findAll(+currentPage, +limit, qs);
+  }
   @ResponseMessage('Get all resumes successfully')
   @Get()
-  @Public()
   findAll(
     @Query('current') currentPage: string,
     @Query('pageSize') limit: string,
@@ -36,7 +49,6 @@ export class ResumesController {
   ) {
     return this.resumesService.findAll(+currentPage, +limit, qs);
   }
-
   @ResponseMessage('Get resume successfully')
   @Get(':id')
   findOne(@Param('id') id: string) {
