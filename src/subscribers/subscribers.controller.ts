@@ -65,10 +65,10 @@ export class SubscribersController {
     return this.subscribersService.findOne(id);
   }
 
-  @Get('/client')
+  @Get('/client/:id')
   @ResponseMessage('Get Subscribers successfully')
-  findOneByEmailClient(@User() user: IUser) {
-    return this.subscribersService.findOneByEmail(user.email);
+  findOneByEmailClient(@Param('id') email: string) {
+    return this.subscribersService.findOneByEmail(email);
   }
 
   @Patch(':id')
@@ -79,7 +79,7 @@ export class SubscribersController {
     @User() user: IUser,
     @Param('id') email: string,
   ) {
-    return this.subscribersService.update(updateSubscribersDto, user,email);
+    return this.subscribersService.update(updateSubscribersDto, user, email);
   }
 
   @Delete(':id')
@@ -87,6 +87,4 @@ export class SubscribersController {
   remove(@Param('id') id: string, @User() user: IUser) {
     return this.subscribersService.remove(id, user);
   }
-
-  
 }
