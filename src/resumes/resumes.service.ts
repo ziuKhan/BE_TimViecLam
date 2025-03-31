@@ -43,13 +43,16 @@ export class ResumesService {
       ]);
   }
 
-  async findAll(currentPage: number, limit: number, qs: string) {
+  async findAll(currentPage: number, limit: number, search: string, qs: string) {
     const { filter, sort, population, projection } = aqp(qs);
-    delete filter.current;
-    delete filter.pageSize;
-
     let offset = (+currentPage - 1) * +limit;
     let defaultLimit = +limit ? +limit : 10;
+
+    if (search) {
+      filter.$or = [
+        { name: { $regex: new RegExp(search), $options: 'i' } },
+      ];
+    }
 
     const totalItems = (await this.resumeModel.find(filter)).length;
     const totalPages = Math.ceil(totalItems / defaultLimit);

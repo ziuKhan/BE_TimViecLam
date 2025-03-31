@@ -14,6 +14,7 @@ import { UpdateResumeDto } from './dto/update-resume.dto';
 import { Public, ResponseMessage, User } from 'src/decorator/customize';
 import { IUser } from 'src/auth/users.interface';
 import { ApiTags } from '@nestjs/swagger';
+import { CommonQueryDto } from '../dto/common-query.dto';
 
 @ApiTags('Resumes')
 @Controller('resumes')
@@ -34,20 +35,16 @@ export class ResumesController {
   @Get('client')
   @Public()
   findAllClient(
-    @Query('current') currentPage: string,
-    @Query('pageSize') limit: string,
-    @Query() qs: string,
+    @Query() query: CommonQueryDto
   ) {
-    return this.resumesService.findAll(+currentPage, +limit, qs);
+    const { page, pageSize, search, filter } = query;
+    return this.resumesService.findAll(+page, +pageSize, search, filter);
   }
   @ResponseMessage('Get all resumes successfully')
   @Get()
-  findAll(
-    @Query('current') currentPage: string,
-    @Query('pageSize') limit: string,
-    @Query() qs: string,
-  ) {
-    return this.resumesService.findAll(+currentPage, +limit, qs);
+  findAll(@Query() query: CommonQueryDto) {
+    const { page, pageSize, search, filter } = query;
+    return this.resumesService.findAll(+page, +pageSize, search, filter);
   }
   @ResponseMessage('Get resume successfully')
   @Get(':id')

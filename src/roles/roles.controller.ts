@@ -14,6 +14,7 @@ import { UpdateRoleDto } from './dto/update-role.dto';
 import { ResponseMessage, User } from 'src/decorator/customize';
 import { IUser } from 'src/auth/users.interface';
 import { ApiTags } from '@nestjs/swagger';
+import { CommonQueryDto } from '../dto/common-query.dto';
 
 @ApiTags('roles')
 @Controller('roles')
@@ -28,12 +29,9 @@ export class RolesController {
 
   @Get()
   @ResponseMessage('Get list roles successfully')
-  findAll(
-    @Query('current') currentPage: string,
-    @Query('pageSize') limit: string,
-    @Query() qs: string,
-  ) {
-    return this.rolesService.findAll(+currentPage, +limit, qs);
+  findAll(@Query() query: CommonQueryDto) {
+    const { page, pageSize, search, filter } = query;
+    return this.rolesService.findAll(+page, +pageSize, search, filter);
   }
 
   @Get(':id')

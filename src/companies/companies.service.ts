@@ -39,11 +39,14 @@ export class CompaniesService {
     return await this.jobModel.countDocuments({ 'companyId': id }).exec()
   }
 
-  async findAll(currentPage: number, limit: number, qs: string): Promise<{ meta: { current: number; pageSize: number; pages: number; total: number; }; result: Company[] }> {
+  async findAll(currentPage: number, limit: number, search: string, qs: string) {
     const { filter, sort, population } = aqp(qs);
 
-    delete filter.current;
-    delete filter.pageSize;
+    if (search) {
+      filter.$or = [
+        { name: { $regex: new RegExp(search), $options: 'i' } },
+      ];
+    }
 
     let offset = (+currentPage - 1) * +limit;
     let defaultLimit = +limit ? +limit : 10;

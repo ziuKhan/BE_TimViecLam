@@ -14,6 +14,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { Public, ResponseMessage, User } from 'src/decorator/customize';
 import { IUser } from 'src/auth/users.interface';
 import { ApiTags } from '@nestjs/swagger';
+import { CommonQueryDto } from '../dto/common-query.dto';
 
 @ApiTags('Users')
 @Controller('users')
@@ -28,12 +29,9 @@ export class UsersController {
 
   @Get()
   @ResponseMessage('Get list user successfully')
-  findAll(
-    @Query('current') currentPage: string,
-    @Query('pageSize') limit: string,
-    @Query() qs: string,
-  ) {
-    return this.usersService.findAll(+currentPage, +limit, qs);
+  findAll(@Query() query: CommonQueryDto) {
+    const { page, pageSize, search, filter } = query;
+    return this.usersService.findAll(+page, +pageSize, search, filter);
   }
 
   @Public()

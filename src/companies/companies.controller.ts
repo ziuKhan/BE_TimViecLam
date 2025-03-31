@@ -15,6 +15,7 @@ import { IUser } from 'src/auth/users.interface';
 import { Public, ResponseMessage, User } from 'src/decorator/customize';
 import { ApiTags } from '@nestjs/swagger';
 import { Company } from './schemas/company.schema';
+import { CommonQueryDto } from '../dto/common-query.dto';
 
 @ApiTags('Companies')
 @Controller('companies')
@@ -29,21 +30,15 @@ export class CompaniesController {
   @Get('/client')
   @Public()
   @ResponseMessage('Get list companies successfully')
-  findAllClient(
-    @Query('current') currentPage: string,
-    @Query('pageSize') limit: string,
-    @Query() qs: string,
-  ): Promise<{ meta: { current: number; pageSize: number; pages: number; total: number; }; result: Company[] }> {
-    return this.companiesService.findAll(+currentPage, +limit, qs);
+  findAllClient(@Query() query: CommonQueryDto) {
+    const { page, pageSize, search, filter } = query;
+    return this.companiesService.findAll(+page, +pageSize, search, filter);
   }
   @Get()
   @ResponseMessage('Get list companies successfully')
-  findAll(
-    @Query('current') currentPage: string,
-    @Query('pageSize') limit: string,
-    @Query() qs: string,
-  ): Promise<{ meta: { current: number; pageSize: number; pages: number; total: number; }; result: Company[] }> {
-    return this.companiesService.findAll(+currentPage, +limit, qs);
+  findAll(@Query() query: CommonQueryDto) {
+    const { page, pageSize, search, filter } = query;
+    return this.companiesService.findAll(+page, +pageSize, search, filter);
   }
 
   @Public()

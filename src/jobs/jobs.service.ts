@@ -23,31 +23,13 @@ export class JobsService {
     return { _id: createJob._id, createdAt: createJob.createdAt };
   }
 
-  async findAll(
-    gte: number,
-    lte: number,
-    currentPage: number,
-    limit: number,
-    qs: string,
-  ) {
+  async findAll(currentPage: number, limit: number, search: string, qs: string) {
     const { filter, sort, population } = aqp(qs);
- 
-    delete filter.current;
-    delete filter.gte;
-    delete filter.lte;
-    delete filter.pageSize;
 
-    if (filter.endDate) {
-      filter.endDate = { $gte: new Date(filter.endDate) }; 
-    } 
-
-    // Chỉ xử lý nếu filter.salary là một đối tượng
-    if (gte && lte) {
-      filter.salary = { $gte: gte, $lte: lte };
-    } else if (gte) {
-      filter.salary = { $gte: gte };
-    } else if (lte) {
-      filter.salary = { $lte: lte };
+    if (search) {
+      filter.$or = [
+        { name: { $regex: new RegExp(search), $options: 'i' } },
+      ];
     }
     
     let offset = (+currentPage - 1) * +limit;

@@ -52,11 +52,17 @@ export class UsersService {
     };
   }
 
-  async findAll(currentPage: number, limit: number, qs: string) {
+  async findAll(currentPage: number, limit: number, search: string, qs: string) {
     const { filter, sort, population } = aqp(qs);
 
     delete filter.current;
     delete filter.pageSize;
+
+    if (search) {
+      filter.$or = [
+        { name: { $regex: new RegExp(search), $options: 'i' } },
+      ];
+    }
 
     let offset = (+currentPage - 1) * +limit;
     let defaultLimit = +limit ? +limit : 10;

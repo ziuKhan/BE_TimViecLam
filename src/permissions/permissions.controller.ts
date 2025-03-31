@@ -14,6 +14,7 @@ import { UpdatePermissionDto } from './dto/update-permission.dto';
 import { Public, ResponseMessage, User } from 'src/decorator/customize';
 import { IUser } from 'src/auth/users.interface';
 import { ApiTags } from '@nestjs/swagger';
+import { CommonQueryDto } from '../dto/common-query.dto';
 
 @ApiTags('Permissions')
 @Controller('permissions')
@@ -31,12 +32,9 @@ export class PermissionsController {
 
   @Get()
   @ResponseMessage('Get list permissions successfully')
-  findAll(
-    @Query('current') currentPage: string,
-    @Query('pageSize') limit: string,
-    @Query() qs: string,
-  ) {
-    return this.permissionsService.findAll(+currentPage, +limit, qs);
+  findAll(@Query() query: CommonQueryDto) {
+    const { page, pageSize, search, filter } = query;
+    return this.permissionsService.findAll(+page, +pageSize, search, filter);
   }
 
   @Get(':id')

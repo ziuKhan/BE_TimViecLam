@@ -29,7 +29,6 @@ export class NotificationsController {
     return this.notificationsService.markAsRead(id, user._id);
   }
 
-  
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.notificationsService.findOne(id);

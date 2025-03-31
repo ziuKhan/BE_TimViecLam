@@ -14,6 +14,7 @@ import { UpdateJobDto } from './dto/update-job.dto';
 import { Public, ResponseMessage, User } from 'src/decorator/customize';
 import { IUser } from 'src/auth/users.interface';
 import { ApiTags } from '@nestjs/swagger';
+import { CommonQueryDto } from '../dto/common-query.dto';
 @ApiTags('Jobs')
 @Controller('jobs')
 export class JobsController {
@@ -29,25 +30,21 @@ export class JobsController {
   @Public()
   @ResponseMessage('Get list job successfully')
   findAllClient(
-    @Query('current') currentPage: string,
-    @Query('pageSize') limit: string,
-    @Query('gte') gte: string,
-    @Query('lte') lte: string,
-    @Query() qs: string,
+    @Query() query: CommonQueryDto
   ) {
-    return this.jobsService.findAll(+gte, +lte, +currentPage, +limit, qs);
+    const { page, pageSize, search, filter } = query;
+    return this.jobsService.findAll(+page, +pageSize, search, filter);
   }
+
+  
   @Get()
   @ResponseMessage('Get list job successfully')
-  findAll(
-    @Query('current') currentPage: string,
-    @Query('pageSize') limit: string,
-    @Query('gte') gte: string,
-    @Query('lte') lte: string,
-    @Query() qs: string,
-  ) {
-    return this.jobsService.findAll(+gte, +lte, +currentPage, +limit, qs);
+  findAll(@Query() query: CommonQueryDto) {
+    const { page, pageSize, search, filter } = query;
+    return this.jobsService.findAll(+page, +pageSize, search, filter);
   }
+
+
   @Public()
   @Get('client/:id')
   @ResponseMessage('Get job successfully')

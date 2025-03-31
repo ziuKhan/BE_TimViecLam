@@ -19,6 +19,7 @@ import {
 } from 'src/decorator/customize';
 import { IUser } from 'src/auth/users.interface';
 import { ApiTags } from '@nestjs/swagger';
+import { CommonQueryDto } from '../dto/common-query.dto';
 
 @ApiTags('Subscribers')
 @Controller('subscribers')
@@ -44,12 +45,9 @@ export class SubscribersController {
   }
   @Get()
   @ResponseMessage('Get list Subscribers successfully')
-  findAll(
-    @Query('current') currentPage: string,
-    @Query('pageSize') limit: string,
-    @Query() qs: string,
-  ) {
-    return this.subscribersService.findAll(+currentPage, +limit, qs);
+  findAll(@Query() query: CommonQueryDto) {
+    const { page, pageSize, search, filter } = query;
+    return this.subscribersService.findAll(+page, +pageSize, search, filter);
   }
 
   @Post('skills')

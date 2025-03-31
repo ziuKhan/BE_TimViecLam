@@ -19,6 +19,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { HealthModule } from './health/health.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { WebsocketsModule } from './websockets/websockets.module';
 import { StatisticsModule } from './statistics/statistics.module';
 
 @Module({
@@ -46,6 +47,8 @@ import { StatisticsModule } from './statistics/statistics.module';
     DatabasesModule,
     SubscribersModule,
     MailModule,
+    WebsocketsModule,
+
     ScheduleModule.forRoot(),
 
     // ThrottlerModule.forRoot([
