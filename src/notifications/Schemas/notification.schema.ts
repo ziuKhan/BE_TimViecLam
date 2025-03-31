@@ -6,36 +6,36 @@ export type NotificationDocument = HydratedDocument<Notification>;
 
 @Schema({ timestamps: true })
 export class Notification {
+  @Prop()
+  title: string;
 
   @Prop()
-  title: string; // Tiêu đề của thông báo
+  message: string; 
 
   @Prop()
-  message: string; // Nội dung thông báo
+  type: string;
 
   @Prop()
-  type: string; // Loại thông báo (ví dụ: hệ thống, tin nhắn, khuyến mãi)
-  @Prop()
-  url: string; 
+  isGlobal: boolean;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: User.name })
-  userId: mongoose.Schema.Types.ObjectId; // Người nhận thông báo
-
-  @Prop()
-  isRead: boolean; // Trạng thái đã đọc
+  @Prop({ type: Object })
+  objInfo: {
+    _id: mongoose.Schema.Types.ObjectId;
+    type: string;
+    name: string;
+  };
 
   //----------------------------------
   @Prop({
     type: {
       _id: { type: mongoose.Schema.Types.ObjectId, ref: User.name },
       email: { type: String },
-    }
+    },
   })
   createdBy: {
     _id: mongoose.Schema.Types.ObjectId;
     email: string;
   };
-  
 
   @Prop({ type: Object })
   updatedBy: {
