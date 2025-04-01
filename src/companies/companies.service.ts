@@ -10,6 +10,7 @@ import aqp from 'api-query-params';
 import { isEmpty } from 'class-validator';
 import { Job, JobDocument } from '../jobs/Schemas/job.schema';
 import { count } from 'console';
+import { IPaginationResponse } from '../interfaces/pagination.interface';
 
 @Injectable()
 export class CompaniesService {
@@ -39,7 +40,7 @@ export class CompaniesService {
     return await this.jobModel.countDocuments({ 'companyId': id }).exec()
   }
 
-  async findAll(currentPage: number, limit: number, search: string, qs: string) {
+  async findAll(currentPage: number, limit: number, search: string, qs: string): Promise<IPaginationResponse<Company>> {
     const { filter, sort, population } = aqp(qs);
 
     if (search) {

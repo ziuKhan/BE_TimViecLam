@@ -16,6 +16,7 @@ import { Public, ResponseMessage, User } from 'src/decorator/customize';
 import { ApiTags } from '@nestjs/swagger';
 import { Company } from './schemas/company.schema';
 import { CommonQueryDto } from '../dto/common-query.dto';
+import { IPaginationResponse } from '../interfaces/pagination.interface';
 
 @ApiTags('Companies')
 @Controller('companies')
@@ -30,13 +31,13 @@ export class CompaniesController {
   @Get('/client')
   @Public()
   @ResponseMessage('Get list companies successfully')
-  findAllClient(@Query() query: CommonQueryDto) {
+  findAllClient(@Query() query: CommonQueryDto): Promise<IPaginationResponse<Company>> {
     const { page, pageSize, search, filter } = query;
     return this.companiesService.findAll(+page, +pageSize, search, filter);
   }
   @Get()
   @ResponseMessage('Get list companies successfully')
-  findAll(@Query() query: CommonQueryDto) {
+  findAll(@Query() query: CommonQueryDto):  Promise<IPaginationResponse<Company>>  {
     const { page, pageSize, search, filter } = query;
     return this.companiesService.findAll(+page, +pageSize, search, filter);
   }
