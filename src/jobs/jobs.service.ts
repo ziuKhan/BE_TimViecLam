@@ -7,12 +7,15 @@ import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { IUser } from 'src/auth/users.interface';
 import aqp from 'api-query-params';
 import mongoose from 'mongoose';
+import { Company, CompanyDocument } from 'src/companies/schemas/company.schema';
 
 @Injectable()
 export class JobsService {
   constructor(
     @InjectModel(Job.name)
     private JobModel: SoftDeleteModel<JobDocument>,
+    @InjectModel(Company.name)
+    private CompanyModel: SoftDeleteModel<CompanyDocument>,
   ) {}
 
   async create(createJobDto: CreateJobDto, user: IUser) {
@@ -25,24 +28,30 @@ export class JobsService {
 
   async findAll(currentPage: number, limit: number, search: string, qs: string) {
     const { filter, sort, population } = aqp(qs);
-
-    if (search) {
-      filter.$or = [
-        { name: { $regex: new RegExp(search), $options: 'i' } },
-      ];
-    }
-    
     let offset = (+currentPage - 1) * +limit;
     let defaultLimit = +limit ? +limit : 10;
 
     const totalItems = (await this.JobModel.find(filter)).length;
     const totalPages = Math.ceil(totalItems / defaultLimit);
 
+    if (search) {
+      const companies = await this.CompanyModel.find({
+        name: { $regex: new RegExp(search), $options: 'i' },
+      });
+      const companyIds = companies.map(company => company._id);
+
+      filter.$or = [
+        { name: { $regex: new RegExp(search), $options: 'i' } },
+        { companyId: { $in: companyIds } },
+      ];
+    }
+
     const result = await this.JobModel.find(filter)
       .skip(offset)
       .limit(defaultLimit)
       .sort(sort as any)
       .populate(population)
+      .populate('companyId')
       .exec();
 
     return {

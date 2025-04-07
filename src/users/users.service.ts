@@ -61,6 +61,7 @@ export class UsersService {
     if (search) {
       filter.$or = [
         { name: { $regex: new RegExp(search), $options: 'i' } },
+        { email: { $regex: new RegExp(search), $options: 'i' } },
       ];
     }
 
@@ -76,7 +77,7 @@ export class UsersService {
       .limit(defaultLimit)
       .sort(sort as any)
       .select('-password')
-      .populate(population)
+      .populate(population) 
       .exec();
 
     return {
