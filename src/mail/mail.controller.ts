@@ -48,12 +48,15 @@ export class MailController {
             name: item.name,
             company: (item.companyId as any)?.name,
             salary:
-              `${item.salary}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' đ',
+              `${item.salaryFrom} - ${item.salaryTo}`.replace(
+                /\B(?=(\d{3})+(?!\d))/g,
+                ',',
+              ) + ' đ',
 
             skills: item.skills,
           };
         });
-        
+
         await this.mailerService.sendMail({
           to: subs.email,
           from: '"ITViec" <itviec@example.com>',

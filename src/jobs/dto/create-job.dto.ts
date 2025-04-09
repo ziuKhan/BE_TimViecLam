@@ -7,6 +7,7 @@ import {
   IsDate,
   IsBoolean,
   IsMongoId,
+  IsOptional,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import mongoose from 'mongoose';
@@ -29,9 +30,17 @@ export class CreateJobDto {
   @IsString({ message: 'Địa điểm phải là chuỗi ký tự' })
   location: string;
 
-  @IsNotEmpty({ message: 'Vui lòng điền thông tin về mức lương' })
-  @IsNumber({}, { message: 'Mức lương phải là số' })
-  salary: number;
+  @IsOptional()
+  @IsNumber({}, { message: 'Mức lương từ phải là số' })
+  salaryFrom: number;
+
+  @IsOptional()
+  @IsNumber({}, { message: 'Mức lương đến phải là số' })
+  salaryTo: number;
+
+  @IsOptional()
+  @IsBoolean({ message: 'Mức lương phải là boolean' })
+  isSalary: boolean;
 
   @IsNotEmpty({ message: 'Vui lòng điền thông tin về số lượng tuyển dụng' })
   @IsNumber({}, { message: 'Số lượng tuyển dụng phải là số' })

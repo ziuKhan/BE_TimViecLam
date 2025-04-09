@@ -47,11 +47,7 @@ async function bootstrap() {
   });
 
   app.enableCors({
-    origin: [
-      'http://localhost:3000',
-      'http://localhost:5000',
-      'https://viecjob.vercel.app',
-    ], //để * là cho tất cả kết nối tới còn để localhost thì chỉ local ý dùng
+    origin: true, //để * là cho tất cả kết nối tới còn để localhost thì chỉ local ý dùng
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     preflightContinue: false,
     credentials: true,

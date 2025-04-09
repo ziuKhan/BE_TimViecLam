@@ -19,7 +19,13 @@ export class Job {
   location: string;
 
   @Prop()
-  salary: number;
+  salaryFrom: number;
+
+  @Prop()
+  salaryTo: number;
+
+  @Prop()
+  isSalary: boolean;
 
   @Prop()
   quantity: number;
