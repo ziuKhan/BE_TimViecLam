@@ -40,6 +40,13 @@ export class UsersController {
   findOneClient(@Param('id') id: string) {
     return this.usersService.findOne(id); 
   }
+
+  @Get('/all')
+  @ResponseMessage('Fetch all user')
+  getAllUser() {
+    return this.usersService.getAllUser();
+  }
+
   @Get(':id')
   @ResponseMessage('Fetch user by id')
   findOne(@Param('id') id: string) {

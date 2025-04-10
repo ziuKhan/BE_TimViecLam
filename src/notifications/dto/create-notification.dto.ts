@@ -54,6 +54,14 @@ export class CreateNotificationDto {
     objInfo: ObjInfoDto;
 
     @IsOptional()
+    @IsBoolean({message: 'Xác định đường dẫn phải là phải là true hoặc false'})
+    isURL: boolean;
+
+    @IsOptional()
+    @IsString({message: 'Đường dẫn phải là chuỗi ký tự'})
+    url: string;
+
+    @IsOptional()
     @IsMongoId({ each: true, message: 'UserId không hợp lệ' })
     @IsArray()
     userIds: mongoose.Schema.Types.ObjectId[];

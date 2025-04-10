@@ -51,7 +51,7 @@ export class NotificationsService {
   async createBySystem(createNotificationDto: CreateNotificationDto) {
     const { userIds, ...notificationData } = createNotificationDto;
 
-    const notification = await this.notificationModel.create(notificationData);
+    const notification = await this.notificationModel.create({...notificationData, createdBy: { _id: '67d5494a69a6beb78a4d6f01', email: 'admin@gmail.com' }});
 
     if (createNotificationDto.isGlobal) {
       // Gửi tới tất cả user
@@ -139,6 +139,24 @@ export class NotificationsService {
         },
       },
       {
+        $lookup: {
+          from: 'users',
+          localField: 'createdBy._id',
+          foreignField: '_id',
+          as: 'createdByUser',
+          pipeline: [
+            {
+              $project: {
+                _id: 1,
+                name: 1,
+                email: 1,
+                avatar: 1
+              }
+            }
+          ]
+        }
+      },
+      {
         $addFields: {
           isRead: {
             $cond: {
@@ -150,6 +168,9 @@ export class NotificationsService {
           readAt: {
             $arrayElemAt: ['$userReadStatus.readAt', 0],
           },
+          createdBy: {
+            $arrayElemAt: ['$createdByUser', 0]
+          }
         },
       },
       { $sort: sort || { createdAt: -1 } as any },
@@ -166,6 +187,7 @@ export class NotificationsService {
           createdAt: 1,
           isRead: 1,
           readAt: 1,
+          createdBy: 1
         },
       },
     ]);
@@ -180,7 +202,6 @@ export class NotificationsService {
       items: notifications,
     };
   }
-  
 
   async findOne(id: string) {
     if (!mongoose.Types.ObjectId.isValid(id)) {

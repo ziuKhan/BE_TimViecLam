@@ -40,6 +40,7 @@ export class PermissionsService {
     if (search) {
       filter.$or = [
         { name: { $regex: new RegExp(search), $options: 'i' } },
+        { module: { $regex: new RegExp(search), $options: 'i' } },
       ];
     }
 

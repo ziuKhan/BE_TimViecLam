@@ -18,6 +18,12 @@ export class Notification {
   @Prop()
   isGlobal: boolean;
 
+  @Prop({ default: true })
+  isURL: boolean;
+
+  @Prop()
+  url: string;
+
   @Prop({ type: Object })
   objInfo: {
     _id: mongoose.Schema.Types.ObjectId;

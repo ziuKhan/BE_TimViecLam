@@ -52,6 +52,9 @@ export class UsersService {
     };
   }
 
+  async getAllUser() {
+    return this.userModel.find({}).select('_id name avatar email');
+  }
   async findAll(currentPage: number, limit: number, search: string, qs: string) {
     const { filter, sort, population } = aqp(qs);
 
@@ -107,9 +110,9 @@ export class UsersService {
     });
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto, iUser: IUser) {
+   update(id: string, updateUserDto: UpdateUserDto, iUser: IUser) {
     if (updateUserDto.password) {
-      updateUserDto.password = await this.hashPassword(updateUserDto.password);
+      updateUserDto.password =  this.hashPassword(updateUserDto.password);
     }
 
     return this.userModel.updateOne(

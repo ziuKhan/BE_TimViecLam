@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -65,7 +65,10 @@ export class JobsService {
     };
   }
 
-  findOne(id: string) {
+  async findOne(id: string) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new NotFoundException('Không tìm thấy công việc');
+    }
     return this.JobModel.findById(id).populate({
       path: 'companyId',
       select: { name: 1, _id: 1, logo: 1 },
