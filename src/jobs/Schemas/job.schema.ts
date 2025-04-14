@@ -45,6 +45,8 @@ export class Job {
   @Prop()
   isActive: boolean;
 
+  @Prop({ default: 0 })
+  countResume: number;
   //----------------------------------
   //----------------------------------
   //----------------------------------

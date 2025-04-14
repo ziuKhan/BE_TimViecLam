@@ -18,6 +18,9 @@ export class Notification {
   @Prop()
   isGlobal: boolean;
 
+  @Prop({ type: [mongoose.Schema.Types.ObjectId], ref: 'User'})
+  userIds: mongoose.Schema.Types.ObjectId[];
+
   @Prop({ default: true })
   isURL: boolean;
 

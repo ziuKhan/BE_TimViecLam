@@ -93,4 +93,12 @@ export class JobsService {
 
     return this.JobModel.softDelete({ _id: id });
   }
+
+  async updateCountResume(id: string) {
+    await this.JobModel.updateOne(
+      { _id: id },
+      { $inc: { countResume: 1 } },
+      { new: true },
+    );
+  }
 }

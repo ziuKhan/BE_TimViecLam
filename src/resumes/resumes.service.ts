@@ -8,12 +8,14 @@ import mongoose from 'mongoose';
 import { IUser } from 'src/auth/users.interface';
 import aqp from 'api-query-params';
 import path from 'path';
+import { JobsService } from '../jobs/jobs.service';
 
 @Injectable()
 export class ResumesService {
   constructor(
     @InjectModel(Resume.name)
     private resumeModel: SoftDeleteModel<ResumeDocument>,
+    private jobService: JobsService,
   ) {}
   async create(createUserCVDto: CreateUserCVDto, user: IUser) {
     const resume = await this.resumeModel.create({
@@ -30,6 +32,7 @@ export class ResumesService {
       ],
       createdBy: { _id: user._id, email: user.email },
     });
+     await this.jobService.updateCountResume(resume.jobId.toString());
     return { _id: resume._id, createAt: resume.createdAt };
   }
 
@@ -63,6 +66,8 @@ export class ResumesService {
       .limit(defaultLimit)
       .sort(sort as any)
       .populate(population)
+      .populate('jobId')
+      .populate('companyId')
       .select(projection as any)
       .exec();
 

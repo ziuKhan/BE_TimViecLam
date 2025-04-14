@@ -20,9 +20,8 @@ export class NotificationsService {
   ) {}
 
   async create(createNotificationDto: CreateNotificationDto, user: IUser) {
-    const { userIds, ...notificationData } = createNotificationDto;
 
-    const notification = await this.notificationModel.create({...notificationData, createdBy: { _id: user._id, email: user.email }});
+    const notification = await this.notificationModel.create({...createNotificationDto, createdBy: { _id: user._id, email: user.email }});
 
     if (createNotificationDto.isGlobal) {
       // Gửi tới tất cả user
@@ -94,7 +93,6 @@ export class NotificationsService {
       });
     }
   }
-
 
   async findAll(
     currentPage: number,
@@ -186,6 +184,8 @@ export class NotificationsService {
           objInfo: 1,
           createdAt: 1,
           isRead: 1,
+          isURL: 1,
+          url: 1,
           readAt: 1,
           createdBy: 1
         },
@@ -193,6 +193,31 @@ export class NotificationsService {
     ]);
   
     const total = await this.notificationModel.countDocuments(finalFilter);
+
+    // Đếm số thông báo chưa đọc
+    const unreadCount = await this.notificationModel.aggregate([
+      { $match: finalFilter },
+      {
+        $lookup: {
+          from: 'notificationusers',
+          let: { notificationId: '$_id' },
+          pipeline: [
+            { $match: { userId: new mongoose.Types.ObjectId(user._id) } },
+            { $match: { $expr: { $eq: ['$$notificationId', '$notificationId'] } } }
+          ],
+          as: 'userReadStatus',
+        },
+      },
+      {
+        $match: {
+          $or: [
+            { userReadStatus: { $size: 0 } },
+            { 'userReadStatus.isRead': false }
+          ]
+        }
+      },
+      { $count: 'total' }
+    ]);
   
     return {
       current: currentPage,
@@ -200,6 +225,7 @@ export class NotificationsService {
       pages: Math.ceil(total / defaultLimit),
       total,
       items: notifications,
+      unreadCount: unreadCount[0]?.total || 0
     };
   }
 
