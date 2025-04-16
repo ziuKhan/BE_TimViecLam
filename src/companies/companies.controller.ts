@@ -48,6 +48,7 @@ export class CompaniesController {
   findOneClient(@Param('id') id: string) {
     return this.companiesService.findOne(id);
   }
+
   @ResponseMessage('Fetch company by id')
   @Get(':id')
   findOne(@Param('id') id: string) {

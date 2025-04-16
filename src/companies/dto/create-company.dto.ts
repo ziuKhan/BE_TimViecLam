@@ -1,4 +1,4 @@
-import { IsArray, IsBoolean, IsEmail, IsNotEmpty } from 'class-validator';
+import { IsArray, IsBoolean, IsEmail, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateCompanyDto {
   @IsNotEmpty({ message: 'Name không được để trống' })
@@ -20,6 +20,24 @@ export class CreateCompanyDto {
   detailedAddress: string;
   @IsNotEmpty({ message: 'fullAddress không được để trống' })
   fullAddress: string;
+  @IsNotEmpty({ message: 'country không được để trống' })
+  country: string;
   @IsBoolean()
   isActive: boolean;
+
+  @IsNotEmpty({ message: 'type không được để trống' })
+  type: string;
+
+  @IsNotEmpty({ message: 'size không được để trống' })
+  size: string;
+
+  @IsNotEmpty({ message: 'industry không được để trống' })
+  industry: string;
+
+  @IsNotEmpty({ message: 'workingDays không được để trống' })
+  @IsArray({ message: 'workingDays phải là mảng' })
+  workingDays: string[];
+
+  @IsNotEmpty({ message: 'overtimePolicy không được để trống' })
+  overtimePolicy: string;
 }

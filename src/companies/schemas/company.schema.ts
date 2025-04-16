@@ -23,7 +23,20 @@ export class Company {
   description: string;
   @Prop()
   logo: string;
+  @Prop()
+  country: string;
 
+  @Prop()
+  type: string;
+
+  @Prop()
+  size: string;
+  @Prop()
+  industry: string;
+  @Prop()
+  workingDays: string[];
+  @Prop()
+  overtimePolicy: string;
   @Prop()
   isActive: boolean;
   //----------------------------------

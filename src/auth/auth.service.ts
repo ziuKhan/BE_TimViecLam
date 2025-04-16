@@ -144,7 +144,6 @@ export class AuthService {
   };
 
   processNewToken = async (reference: string, response: Response) => {
-    try {
       this.jwtService.verify(reference, {
         secret: this.configService.get<string>('JWT_REFRESH_TOKEN_SECRET'),
       });
@@ -190,11 +189,8 @@ export class AuthService {
           },
         };
       } else {
-        throw new BadRequestException('Refresh token hết hợp.');
+        throw new BadRequestException('LOGOUT');
       }
-    } catch (err) {
-      throw new BadRequestException('Refresh token đã hết hạn.', err);
-    }
   };
 
   logout = (response: Response, user: IUser) => {
