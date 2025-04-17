@@ -87,3 +87,4 @@ Dự án được tổ chức thành các module chính:
 
 Nguyễn Duy Khang - duykhang02vnn@gmail.com
 
+nest g resource users --no-spec

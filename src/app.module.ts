@@ -21,6 +21,7 @@ import { HealthModule } from './health/health.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { WebsocketsModule } from './websockets/websockets.module';
 import { StatisticsModule } from './statistics/statistics.module';
+import { SkillsModule } from './skills/skills.module';
 
 @Module({
   imports: [
@@ -63,6 +64,8 @@ import { StatisticsModule } from './statistics/statistics.module';
     NotificationsModule,
 
     StatisticsModule,
+
+    SkillsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
