@@ -19,8 +19,8 @@ export class CreateJobDto {
 
   @IsNotEmpty({ message: 'Vui lòng nhập kỹ năng' })
   @IsArray({ message: 'Kỹ năng phải là một mảng' })
-  @IsString({ each: true, message: 'Mỗi kỹ năng phải là chuỗi ký tự' })
-  skills: string[];
+  @IsMongoId({ each: true, message: 'Mỗi kỹ năng phải là ID' })
+  skills: mongoose.Schema.Types.ObjectId[];
 
   @IsNotEmpty({ message: 'Vui lòng điền companyId' })
   @IsMongoId({ message: 'Không đúng định dạng ID' })
