@@ -22,6 +22,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { WebsocketsModule } from './websockets/websockets.module';
 import { StatisticsModule } from './statistics/statistics.module';
 import { SkillsModule } from './skills/skills.module';
+import { SearchModule } from './search/search.module';
 
 @Module({
   imports: [
@@ -66,6 +67,8 @@ import { SkillsModule } from './skills/skills.module';
     StatisticsModule,
 
     SkillsModule,
+
+    SearchModule,
   ],
   controllers: [AppController],
   providers: [AppService],

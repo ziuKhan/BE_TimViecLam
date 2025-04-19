@@ -52,6 +52,7 @@ export class JobsService {
       .sort(sort as any)
       .populate(population)
       .populate('companyId')
+      .populate('skills')
       .exec();
 
     return {
