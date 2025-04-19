@@ -17,7 +17,7 @@ export class SearchService {
     private skillModel: SoftDeleteModel<SkillDocument>,
   ) {}
 
-  async search(currentPage: number, limit: number, search: string, qs: any) {
+  async suggest(currentPage: number, limit: number, search: string, qs: any) {
     const { filter, sort, population, projection } = aqp(qs);
 
     const regex = new RegExp(search, 'i');
@@ -52,7 +52,7 @@ export class SearchService {
     const result = [
   
       skills.length > 0 && {
-        value: 'Kĩ năng', 
+        value: 'Kĩ năng và tiêu đề', 
         options: skills.map((skill) => ({
           value: skill.name,
           _id: skill._id,
@@ -75,6 +75,55 @@ export class SearchService {
         pageSize: limit, //số lượng bản ghi đã lấy
       },
       result,
+    };
+  }
+
+  async search(currentPage: number, limit: number, search: string, qs: any) {
+    const { filter, sort, population, projection } = aqp(qs);
+    let offset = (+currentPage - 1) * +limit;
+    let defaultLimit = +limit ? +limit : 10;
+
+    if (search) {
+        // Tìm công ty theo tên
+        const companies = await this.companyModel.find({
+            name: { $regex: new RegExp(search), $options: 'i' },
+        });
+        const companyIds = companies.map(company => company._id);
+
+        // Tìm kỹ năng theo tên
+        const skills = await this.skillModel.find({
+            name: { $regex: new RegExp(search), $options: 'i' },
+        });
+        const skillIds = skills.map(skill => skill._id);
+
+        filter.$or = [
+            { name: { $regex: new RegExp(search), $options: 'i' } }, // Tìm theo tên job
+            { companyId: { $in: companyIds } }, // Tìm theo tên công ty
+            { skills: { $in: skillIds } }, // Tìm theo tên kỹ năng
+        ];
+    }
+
+    const totalItems = await this.jobModel.countDocuments(filter);
+    const totalPages = Math.ceil(totalItems / defaultLimit);
+
+    const result = await this.jobModel.find(filter)
+        .skip(offset)
+        .limit(defaultLimit)
+        .sort(sort as any)
+        .populate(population)
+        .populate('companyId')
+        .populate('skills')
+        .select(projection)
+        .exec();
+
+    return {
+        meta: {
+            current: currentPage, //trang hiện tại
+            pageSize: limit, //số lượng bản ghi đã lấy
+            pages: totalPages, //tổng số trang với điều kiện query
+            total: totalItems, // tổng số phần tử (số bản ghi)
+        },
+        result,
     };
   }
 }

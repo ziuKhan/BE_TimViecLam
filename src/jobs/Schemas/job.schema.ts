@@ -48,6 +48,11 @@ export class Job {
 
   @Prop({ default: 0 })
   countResume: number;
+
+  @Prop() //Hình thức làm việc
+  workingModel: string;
+  
+
   //----------------------------------
   //----------------------------------
   //----------------------------------

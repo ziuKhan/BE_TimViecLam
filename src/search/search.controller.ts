@@ -7,10 +7,18 @@ import { CommonQueryDto } from '../dto/common-query.dto';
 export class SearchController {
   constructor(private readonly searchService: SearchService) {}
 
+  @Get('suggest')
+  @Public()
+  @ResponseMessage('Suggest successfully')
+  suggest(@Query() query: CommonQueryDto) { 
+    const { page, pageSize, search, filter } = query;
+    return this.searchService.suggest(+page, +pageSize, search, filter);
+  }
+
   @Get()
   @Public()
   @ResponseMessage('Search successfully')
-  search(@Query() query: CommonQueryDto) { 
+  search(@Query() query: CommonQueryDto) {
     const { page, pageSize, search, filter } = query;
     return this.searchService.search(+page, +pageSize, search, filter);
   }
