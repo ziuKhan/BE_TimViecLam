@@ -58,22 +58,24 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const user = req.user;
-    const data = await this.authService.login(user, res)
+    const data = await this.authService.login(user, res);
     const redirectUrl = `http://localhost:5000/login/${data.access_token}`;
     return res.redirect(redirectUrl);
-    }
+  }
 
   // @UseGuards(JwtAuthGuard)
   // @UseGuards(ThrottlerGuard)
   @ResponseMessage('Get User by access token')
   @Get('/account')
   async getAccount(@User() user: IUser) {
-    const temp = (await this.roleService.findOne(user.role._id)) as any;
-    user.permissions = temp.permissions.map(({ _id, apiPath, method }) => ({ _id, apiPath, method }));
-    return {
-        ...user,
-        companyId: user.companyId,
-    };
+    delete user.permissions;
+    return user;
+  }
+
+  @ResponseMessage('Get User by access token')
+  @Get('/permission')
+  async getPermission(@User() user: IUser) {
+    return user.permissions;
   }
 
   @ResponseMessage('Get User by access token')

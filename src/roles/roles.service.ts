@@ -8,12 +8,14 @@ import aqp from 'api-query-params';
 import { IUser } from 'src/auth/users.interface';
 import mongoose from 'mongoose';
 import { ADMIN_ROLE } from 'src/databases/sample';
+import { WebsocketsGateway } from '../websockets/websockets.gateway';
 
 @Injectable()
 export class RolesService {
   constructor(
     @InjectModel(Role.name)
     private roleModel: SoftDeleteModel<RoleDocument>,
+    private websocketGateway: WebsocketsGateway,
   ) {}
 
   async create(createRoleDto: CreateRoleDto, user: IUser) {
@@ -33,15 +35,18 @@ export class RolesService {
     return { _id: Role._id, createdAt: Role.createdAt };
   }
 
-  async findAll(currentPage: number, limit: number,search: string, qs: string) {
+  async findAll(
+    currentPage: number,
+    limit: number,
+    search: string,
+    qs: string,
+  ) {
     const { filter, sort, population, projection } = aqp(qs);
     delete filter.current;
     delete filter.pageSize;
 
     if (search) {
-      filter.$or = [
-        { name: { $regex: new RegExp(search), $options: 'i' } },
-      ];
+      filter.$or = [{ name: { $regex: new RegExp(search), $options: 'i' } }];
     }
 
     let offset = (+currentPage - 1) * +limit;
@@ -86,14 +91,18 @@ export class RolesService {
     //     `Name ${updateRoleDto.name} đã tồn tại, vui lòng điền Name khác`,
     //   );
     // }
-
-    return this.roleModel.updateOne(
+    const res = await this.roleModel.updateOne(
       { _id: id },
       {
         ...updateRoleDto,
         updatedBy: { _id: user._id, email: user.email },
       },
     );
+    this.websocketGateway.sendNotificationToAllUsers(
+      'Update Role',
+      'permission',
+    );
+    return res;
   }
 
   async remove(id: string, user: IUser) {

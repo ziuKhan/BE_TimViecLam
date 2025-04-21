@@ -66,5 +66,5 @@ export class CreateJobDto {
 
   @IsNotEmpty({ message: 'Vui lòng điền thông tin về trạng thái' })
   @IsBoolean({ message: 'Trạng thái phải là boolean' })
-  isActive: boolean;
+  isActive: boolean; 
 }

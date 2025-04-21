@@ -57,7 +57,6 @@ export class AuthService {
 
   async login(user: IUser, response: Response) {
     const { _id, name, email, role, permissions, avatar, companyId } = user;
-    const filteredPermissions = permissions.map(({ _id, apiPath, method }) => ({ _id, apiPath, method }));
     const payload = {
       sub: 'token login',
       iss: 'from server',
@@ -88,7 +87,6 @@ export class AuthService {
         role,
         avatar,
         companyId,
-        permissions: filteredPermissions,
       },
     };
   }
@@ -185,7 +183,6 @@ export class AuthService {
             avatar,
             role,
             companyId: user.company?._id,
-            permissions: temp?.permissions ?? [],
           },
         };
       } else {

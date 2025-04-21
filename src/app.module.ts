@@ -23,6 +23,7 @@ import { WebsocketsModule } from './websockets/websockets.module';
 import { StatisticsModule } from './statistics/statistics.module';
 import { SkillsModule } from './skills/skills.module';
 import { SearchModule } from './search/search.module';
+import { CustomerApprovalModule } from './customer-approval/customer-approval.module';
 
 @Module({
   imports: [
@@ -69,6 +70,8 @@ import { SearchModule } from './search/search.module';
     SkillsModule,
 
     SearchModule,
+
+    CustomerApprovalModule,
   ],
   controllers: [AppController],
   providers: [AppService],

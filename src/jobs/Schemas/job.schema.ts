@@ -51,7 +51,6 @@ export class Job {
 
   @Prop() //Hình thức làm việc
   workingModel: string;
-  
 
   //----------------------------------
   //----------------------------------
