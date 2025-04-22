@@ -67,4 +67,16 @@ export class CustomerApprovalController {
   remove(@Param('id') id: string, @User() user: IUser) {
     return this.customerApprovalService.remove(id, user);
   }
+
+  @ResponseMessage('Update status customerApproval successfully!')
+  @Patch('status/:id')
+  updateStatus(
+    @Param('id') id: string,
+    @Query('status') status: string,
+    @Body() updateCustomerApprovalDto: UpdateCustomerApprovalDto,
+    @User() user: IUser,
+  ) {
+    return this.customerApprovalService.updateStatus(id, status, updateCustomerApprovalDto, user);
+  }
+
 }

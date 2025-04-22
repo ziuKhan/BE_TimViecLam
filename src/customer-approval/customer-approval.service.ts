@@ -86,4 +86,16 @@ export class CustomerApprovalService {
 
     return this.customerApprovalModel.softDelete({ _id: id });
   }
+
+  async updateStatus(id: string, status: string, updateCustomerApprovalDto: UpdateCustomerApprovalDto, user: IUser) {
+    const res = await this.customerApprovalModel.updateOne(
+      { _id: id },
+      { status: status, reason: updateCustomerApprovalDto.reason, updatedBy: { _id: user._id, email: user.email } },
+    );
+
+    if(status === 'CN') {
+
+    }
+    return res;
+  }
 }

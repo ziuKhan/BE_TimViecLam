@@ -38,4 +38,8 @@ export class CreateCustomerApprovalDto {
   @IsNotEmpty({ message: 'Điều khoản không được để trống' })
   @IsBoolean({ message: 'Điều khoản phải là boolean' })
   clause: boolean;
+
+  @IsOptional()
+  @IsString({ message: 'Lý do phải là chữ' })
+  reason: string;
 }

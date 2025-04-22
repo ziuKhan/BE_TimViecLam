@@ -25,8 +25,9 @@ export class CustomerApproval {
   description: string;
   @Prop()
   clause: boolean;
-  
-  
+
+  @Prop()
+  reason: string;
   //----------------------------------
 
   //----------------------------------
