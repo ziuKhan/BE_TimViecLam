@@ -216,12 +216,13 @@ export class UsersService {
     registerHRUserDto.password = await this.hashPassword(
       registerHRUserDto.password,
     );
+
     //create a new user
     let user = await this.userModel.create({
       ...registerHRUserDto,
       role: userRole?._id,
       avatar: 'avatar_user.svg',
-      isActive: false,
+      isActive: true,
     });
 
     return {

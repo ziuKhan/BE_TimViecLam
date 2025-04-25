@@ -56,13 +56,14 @@ export class AuthService {
   }
 
   async login(user: IUser, response: Response) {
-    const { _id, name, email, role, permissions, avatar, companyId } = user;
+    const { _id, name, email, role, permissions, avatar, companyId, isSetup } = user;
     const payload = {
       sub: 'token login',
       iss: 'from server',
       _id,
       name,
       avatar,
+      isSetup,
       email,
       role,
       companyId,
@@ -85,6 +86,7 @@ export class AuthService {
         name,
         email,
         role,
+        isSetup,
         avatar,
         companyId,
       },
@@ -119,14 +121,12 @@ export class AuthService {
       role: user.role,
       companyId: user.company?._id,
       permissions: temp?.permissions ?? [],
+      isSetup: user.isSetup || null,
     };
   }
 
   register(registerUserDto: RegisterUserDto) {
     return this.usersService.register(registerUserDto);
-  }
-  createCompanyHR(createCompanyDto: CreateCompanyDto) {
-    return this.companiesService.createHR(createCompanyDto);
   }
 
   registerHR(registerHRUserDto: RegisterHRUserDto) {
@@ -148,13 +148,14 @@ export class AuthService {
 
       let user = await this.usersService.findUserByToken(reference);
       if (user) {
-        const { _id, name, email, role, avatar } = user;
+        const { _id, name, email, role, avatar, isSetup } = user;
         const payload = {
           sub: 'token refresh',
           iss: 'from server',
           _id,
           name,
           avatar,
+          isSetup,
           email,
           companyId: user.company?._id,
           role,
@@ -181,6 +182,7 @@ export class AuthService {
             name,
             email,
             avatar,
+            isSetup,
             role,
             companyId: user.company?._id,
           },

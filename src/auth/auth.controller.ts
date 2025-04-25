@@ -91,18 +91,6 @@ export class AuthController {
     return this.authService.register(registerUserDto);
   }
 
-  @Public()
-  @Post('/customer/register')
-  @ResponseMessage('Register a new HR user')
-  registerHR(@Body() registerHRUserDto: RegisterHRUserDto) {
-    return this.authService.register(registerHRUserDto);
-  }
-  @Public()
-  @Post('/customer/company')
-  @ResponseMessage('Register a new HR user')
-  createCompanyHR(@Body() createCompanyDto: CreateCompanyDto) {
-    return this.authService.createCompanyHR(createCompanyDto);
-  }
 
   @Public()
   @Get('/refresh')

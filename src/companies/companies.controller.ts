@@ -9,7 +9,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { CompaniesService } from './companies.service';
-import { CreateCompanyDto } from './dto/create-company.dto';
+import { CreateCompanyDto, CreateCompanyHRDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { IUser } from 'src/auth/users.interface';
 import { Public, ResponseMessage, User } from 'src/decorator/customize';
@@ -26,6 +26,11 @@ export class CompaniesController {
   @Post()
   create(@Body() createCompanyDto: CreateCompanyDto, @User() user: IUser) {
     return this.companiesService.create(createCompanyDto, user);
+  }
+
+  @Post('/hr')
+  createHR(@Body() createCompanyDto: CreateCompanyHRDto, @User() user: IUser) {
+    return this.companiesService.createHR(createCompanyDto, user);
   }
 
   @Get('/client')

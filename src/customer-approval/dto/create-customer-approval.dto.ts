@@ -43,3 +43,4 @@ export class CreateCustomerApprovalDto {
   @IsString({ message: 'Lý do phải là chữ' })
   reason: string;
 }
+

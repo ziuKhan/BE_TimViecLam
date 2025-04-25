@@ -1,5 +1,5 @@
 import { Injectable, Query } from '@nestjs/common';
-import { CreateCompanyDto } from './dto/create-company.dto';
+import { CreateCompanyDto, CreateCompanyHRDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { Company, CompanyDocument } from './schemas/company.schema';
@@ -11,6 +11,7 @@ import { isEmpty } from 'class-validator';
 import { Job, JobDocument } from '../jobs/Schemas/job.schema';
 import { count } from 'console';
 import { IPaginationResponse } from '../interfaces/pagination.interface';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class CompaniesService {
@@ -19,6 +20,7 @@ export class CompaniesService {
     private companyModel: SoftDeleteModel<CompanyDocument>,
     @InjectModel(Job.name)
     private jobModel: SoftDeleteModel<JobDocument>,
+    private usersService: UsersService,
   ) {}
 
   create(createCompanyDto: CreateCompanyDto, user: IUser) {
@@ -28,25 +30,28 @@ export class CompaniesService {
     });
   }
 
-  createHR(createCompanyDto: CreateCompanyDto) {
+  createHR(createCompanyDto: CreateCompanyHRDto, user: IUser) {
     return this.companyModel.create({
       ...createCompanyDto,
+      createdBy: { _id: user._id, email: user.email },
       isActive: false,
     });
   }
 
   async findJobs(id: string) {
-
-    return await this.jobModel.countDocuments({ 'companyId': id }).exec()
+    return await this.jobModel.countDocuments({ companyId: id }).exec();
   }
 
-  async findAll(currentPage: number, limit: number, search: string, qs: string): Promise<IPaginationResponse<Company>> {
+  async findAll(
+    currentPage: number,
+    limit: number,
+    search: string,
+    qs: string,
+  ): Promise<IPaginationResponse<Company>> {
     const { filter, sort, population } = aqp(qs);
 
     if (search) {
-      filter.$or = [
-        { name: { $regex: new RegExp(search), $options: 'i' } },
-      ];
+      filter.$or = [{ name: { $regex: new RegExp(search), $options: 'i' } }];
     }
 
     let offset = (+currentPage - 1) * +limit;

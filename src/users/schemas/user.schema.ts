@@ -47,6 +47,8 @@ export class User {
   @Prop()
   refreshToken: string;
 
+  @Prop({default: false})
+  isSetup: boolean;
   //----------------------------------
   //----------------------------------
   @Prop({ type: Object })

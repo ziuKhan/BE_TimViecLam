@@ -54,6 +54,13 @@ export class CreateUserDto {
   @IsOptional()
   @IsString()
   avatar: string;
+
+  @IsOptional()
+  @IsString()
+  phoneNumber: string;
+
+  @IsOptional()
+  isSetup: boolean;
 }
 
 export class RegisterUserDto {
@@ -85,14 +92,12 @@ export class RegisterHRUserDto {
   @IsNotEmpty({ message: 'phoneNumber không được để trống' })
   phoneNumber: string;
 
-  @IsString()
-  avatar: string;
-
+  @IsOptional()
   @IsNotEmptyObject()
   @IsObject()
   @ValidateNested()
   @Type(() => Company)
-  company!: Company;
+  company?: Company;
 }
 
 export class UserLoginDto {

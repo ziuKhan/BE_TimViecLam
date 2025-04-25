@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { CustomerApprovalService } from './customer-approval.service';
 import { CreateCustomerApprovalDto } from './dto/create-customer-approval.dto';
-import { UpdateCustomerApprovalDto } from './dto/update-customer-approval.dto';
+import { UpdateAcountSetupDto, UpdateCustomerApprovalDto } from './dto/update-customer-approval.dto';
 import { Public, ResponseMessage, User } from '../decorator/customize';
 import { IUser } from '../auth/users.interface';
 import { CommonQueryDto } from '../dto/common-query.dto';
@@ -78,5 +78,9 @@ export class CustomerApprovalController {
   ) {
     return this.customerApprovalService.updateStatus(id, status, updateCustomerApprovalDto, user);
   }
-
+  @ResponseMessage('Update account setup successfully')
+  @Post('/setup')
+  updateSetup(@Body() updateAcountSetupDto: UpdateAcountSetupDto, @User() user: IUser) {
+    return this.customerApprovalService.UpdateAccountSetup(updateAcountSetupDto, user);
+  }
 }

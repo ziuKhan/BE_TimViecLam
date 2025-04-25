@@ -7,6 +7,7 @@ export interface IUser {
     _id: string;
     name: string;
   };
+  isSetup?: boolean;
   permissions?: {
     apiPath: string;
     method: string;
