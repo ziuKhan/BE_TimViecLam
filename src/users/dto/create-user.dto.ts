@@ -36,8 +36,8 @@ export class CreateUserDto {
   @IsNotEmpty({ message: 'address không được để trống' })
   address: string;
 
+  @IsOptional()
   @IsString({ message: 'gender phải là chuỗi ký tự' })
-  @IsNotEmpty({ message: 'gender không được để trống' })
   gender: string;
 
   @IsBoolean()
