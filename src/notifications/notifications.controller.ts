@@ -43,4 +43,10 @@ export class NotificationsController {
   remove(@Param('id') id: string, @User() user: IUser) {
     return this.notificationsService.remove(id, user);
   }
+
+  @Delete('hide/:id')
+  @ResponseMessage('Xóa thông báo thành công')
+  removeByUser(@Param('id') id: string, @User() user: IUser) {
+    return this.notificationsService.removeByUser(id, user);
+  }
 }

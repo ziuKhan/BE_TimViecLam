@@ -108,6 +108,12 @@ export class NotificationsService {
     const personalNotificationIds = await this.notificationUserModel.distinct('notificationId', {
       userId: new mongoose.Types.ObjectId(user._id),
     });
+
+    // Lấy danh sách thông báo đã bị ẩn của user
+    const hiddenNotifications = await this.notificationUserModel.distinct('notificationId', {
+      userId: new mongoose.Types.ObjectId(user._id),
+      isHidden: true
+    });
   
     const searchCondition = search 
       ? { title: { $regex: search, $options: 'i' } }
@@ -117,6 +123,7 @@ export class NotificationsService {
       ...filter,
       ...searchCondition,
       isDeleted: { $ne: true },
+      _id: { $nin: hiddenNotifications }, // Loại bỏ các thông báo đã bị ẩn
       $or: [
         { isGlobal: true },
         ...(personalNotificationIds.length ? [{ _id: { $in: personalNotificationIds } }] : []),
@@ -259,5 +266,38 @@ export class NotificationsService {
     );
 
     return this.notificationModel.softDelete({ _id: id });
+  }
+
+  async removeByUser(notificationId: string, user: IUser) {
+    // Kiểm tra xem người dùng có quyền xóa thông báo này không
+    const notification = await this.notificationModel.findOne({
+      _id: notificationId,
+      $or: [
+        { isGlobal: true },
+        { 'userIds': user._id }
+      ]
+    });
+
+    if (!notification) {
+      throw new BadRequestException('Không tìm thấy thông báo để xóa');
+    }
+
+    await this.notificationUserModel.findOneAndUpdate(
+      {
+        notificationId: notification._id,
+        userId: user._id
+      },
+      {
+        $set: {
+          isHidden: true,
+          hiddenAt: new Date()
+        }
+      },
+      { upsert: true }
+    );
+
+    return {
+      message: 'Xóa thông báo thành công'
+    };
   }
 }

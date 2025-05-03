@@ -16,6 +16,12 @@ export class NotificationUser {
 
   @Prop()
   createdAt: Date;
+
+  @Prop()
+  isHidden: boolean;
+
+  @Prop()
+  hiddenAt: Date;
 }
 
 export const NotificationUserSchema = SchemaFactory.createForClass(NotificationUser);
