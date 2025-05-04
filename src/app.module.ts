@@ -24,6 +24,9 @@ import { StatisticsModule } from './statistics/statistics.module';
 import { SkillsModule } from './skills/skills.module';
 import { SearchModule } from './search/search.module';
 import { CustomerApprovalModule } from './customer-approval/customer-approval.module';
+import { TransactionsModule } from './transactions/transactions.module';
+import { SubscriptionPackageModule } from './subscription-package/subscription-package.module';
+import { VipHistoryModule } from './vip-history/vip-history.module';
 
 @Module({
   imports: [
@@ -72,6 +75,12 @@ import { CustomerApprovalModule } from './customer-approval/customer-approval.mo
     SearchModule,
 
     CustomerApprovalModule,
+
+    TransactionsModule,
+
+    SubscriptionPackageModule,
+
+    VipHistoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],

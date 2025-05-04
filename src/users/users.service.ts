@@ -271,4 +271,49 @@ export class UsersService {
       select: { name: 1 },
     });
   };
+
+  async upgradeToVIP(userId: string, duration: number) {
+    const user = await this.userModel.findById(userId);
+    if (!user) {
+      throw new BadRequestException('Người dùng không tồn tại');
+    }
+
+    const currentDate = new Date();
+    
+    // Nếu user đã là VIP và còn hạn, cộng thêm thời gian
+    if (user.vipInfo?.isVIP && user.vipInfo.endDate > currentDate) {
+      const newEndDate = new Date(user.vipInfo.endDate);
+      newEndDate.setMonth(newEndDate.getMonth() + duration);
+      
+      await this.userModel.updateOne(
+        { _id: userId },
+        {
+          role: 'VIP',
+          vipInfo: {
+            isVIP: true,
+            startDate: user.vipInfo.startDate, // Giữ ngày bắt đầu cũ
+            endDate: newEndDate,
+            status: 'ACTIVE'
+          }
+        }
+      );
+    } else {
+      // Nếu user chưa là VIP hoặc đã hết hạn
+      const endDate = new Date();
+      endDate.setMonth(endDate.getMonth() + duration);
+      
+      await this.userModel.updateOne(
+        { _id: userId },
+        {
+          role: 'VIP',
+          vipInfo: {
+            isVIP: true,
+            startDate: currentDate,
+            endDate: endDate,
+            status: 'ACTIVE'
+          }
+        }
+      );
+    }
+  }
 }

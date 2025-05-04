@@ -26,6 +26,7 @@ export class User {
 
   @Prop()
   address: string;
+
   @Prop()
   isActive: boolean;
 
@@ -49,6 +50,15 @@ export class User {
 
   @Prop({default: false})
   isSetup: boolean;
+
+  @Prop({ type: Object })
+  vipInfo: {
+    isVIP: boolean;
+    startDate: Date;
+    endDate: Date;
+    status: string;
+  };
+
   //----------------------------------
   //----------------------------------
   @Prop({ type: Object })
@@ -62,6 +72,7 @@ export class User {
     _id: mongoose.Schema.Types.ObjectId;
     email: string;
   };
+
   @Prop({ type: Object })
   deletedBy: {
     _id: mongoose.Schema.Types.ObjectId;
@@ -70,10 +81,13 @@ export class User {
 
   @Prop()
   createdAt: Date;
+
   @Prop()
   updatedAt: Date;
+
   @Prop()
   deletedAt: Date;
+
   @Prop()
   isDeleted: boolean;
 }
