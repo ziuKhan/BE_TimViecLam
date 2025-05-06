@@ -15,6 +15,9 @@ export class SubscriptionPackage {
   price: number;
 
   @Prop({ required: true })
+  priceDiscount: number;
+  
+  @Prop({ required: true })
   duration: number;
 
   @Prop()

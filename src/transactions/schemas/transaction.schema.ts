@@ -26,9 +26,6 @@ export class Transaction {
   @Prop()
   buyerEmail: string;
 
-  @Prop()
-  isAnonymous: boolean;
-
   @Prop({ type: [{ name: String, quantity: Number, price: Number }] })
   items: { name: string; quantity: number; price: number }[];
 

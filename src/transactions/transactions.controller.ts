@@ -5,7 +5,8 @@ import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { Public, User } from '../decorator/customize';
 import { CommonQueryDto } from '../dto/common-query.dto';
 import { IUser } from '../auth/users.interface';
-
+import { ApiTags } from '@nestjs/swagger';
+@ApiTags('Transactions')
 @Controller('transactions')
 export class TransactionsController {
   constructor(private readonly transactionsService: TransactionsService) {}

@@ -5,7 +5,8 @@ import { UpdateSkillDto } from './dto/update-skill.dto';
 import { Public, ResponseMessage, User } from '../decorator/customize';
 import { IUser } from '../auth/users.interface';
 import { CommonQueryDto } from '../dto/common-query.dto';
-
+import { ApiTags } from '@nestjs/swagger';
+@ApiTags('Skills')
 @Controller('skills')
 export class SkillsController {
   constructor(private readonly skillsService: SkillsService) {}

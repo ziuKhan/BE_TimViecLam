@@ -24,24 +24,15 @@ export class TransactionsService {
     private usersService: UsersService
   ) {
     this.payos = new PayOS(
-      '5453fa9d-c19c-42e9-9278-78da7ab4cb22',
-      '0b0dd15c-8005-4dd7-904c-28c35f272eff',
-      '542871151a5b87b3f4b16814f8e66c1214a6a235845325b3b7169288b24463a2',
+      '9ee20970-bc51-4380-88b7-0f5253cfbd78',
+      'a6a720f7-fb58-4de5-9946-883b171f6fc9',
+      '695538773d8fdda48612939fd5d4ea524c289a4ae3e3aaab68c8860d16697d1a',
     );
   }
 
-  async getMaxOrderCode(): Promise<number> {
-    const maxOrder = await this.transactionModel
-      .findOne()
-      .sort({ orderCode: -1 }) // Sắp xếp theo orderCode giảm dần
-      .select('orderCode') // Chỉ lấy trường orderCode
-      .exec();
-    return maxOrder?.orderCode || 124;
-  }
-  
   async create(createTransactionDto: CreateTransactionDto, user: IUser) { 
     try {
-      let orderCode = (await this.getMaxOrderCode()) + 1;
+      const orderCode = Date.now();
 
       // Nếu là giao dịch nâng cấp VIP
       if (createTransactionDto.type === 'VIP_UPGRADE') {
@@ -49,13 +40,12 @@ export class TransactionsService {
         if (!subscriptionPackage) {
           throw new BadRequestException('Gói đăng ký không tồn tại');
         }
-        createTransactionDto.amount = subscriptionPackage.price;
-        createTransactionDto.description = `Nâng cấp tài khoản ${subscriptionPackage.name}`;
       }
 
       await this.transactionModel.create({
         ...createTransactionDto,
         orderCode,
+        user: user._id,
         createdBy: {
           _id: user._id,
           email: user.email
@@ -79,6 +69,11 @@ export class TransactionsService {
   }
 
   async remove(id: number) {
+    const transaction = await this.transactionModel.findOne({ orderCode: id });
+    if (!transaction) {
+      throw new BadRequestException('Giao dịch không tồn tại');
+    }
+     await this.transactionModel.deleteOne({ orderCode: id });
     const deletePayment = await this.payos.cancelPaymentLink(id);
     return deletePayment;
   }

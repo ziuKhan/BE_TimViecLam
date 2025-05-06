@@ -13,6 +13,10 @@ export class CreateSubscriptionPackageDto {
   @IsNumber({}, { message: 'Giá gói phải là số' })
   price: number;
 
+  @IsNotEmpty({ message: 'Giá gói khuyến mãi không được để trống' })
+  @IsNumber({}, { message: 'Giá gói khuyến mãi phải là số' })
+  priceDiscount: number;
+
   @IsNotEmpty({ message: 'Thời hạn không được để trống' })
   @IsNumber({}, { message: 'Thời hạn phải là số tháng' })
   duration: number;
@@ -20,11 +24,6 @@ export class CreateSubscriptionPackageDto {
   @IsOptional()
   @IsString({ message: 'Mô tả phải là chuỗi ký tự' })
   description: string;
-
-  @IsOptional()
-  @IsArray({ message: 'Tính năng phải là mảng' })
-  @IsString({ each: true, message: 'Mỗi tính năng phải là chuỗi ký tự' })
-  features: string[];
 
   @IsOptional()
   @IsBoolean({ message: 'Trạng thái phải là boolean' })

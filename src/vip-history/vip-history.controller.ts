@@ -6,7 +6,8 @@ import { User } from '../decorator/customize';
 import { IUser } from '../auth/users.interface';
 import { CommonQueryDto } from '../dto/common-query.dto';
 import { Cron } from '@nestjs/schedule';
-
+import { ApiTags } from '@nestjs/swagger';
+@ApiTags('Vip History')
 @Controller('vip-history')
 export class VipHistoryController {
   constructor(private readonly vipHistoryService: VipHistoryService) {}

@@ -29,9 +29,6 @@ class ItemDto {
 }
 
 export class CreateTransactionDto {
-  @IsOptional()
-  @ApiProperty()
-  isAnonymous: boolean;
 
   @IsNotEmpty({ message: 'Số tiền không được để trống' })
   @ApiProperty()

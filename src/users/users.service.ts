@@ -14,7 +14,7 @@ import { IUser } from 'src/auth/users.interface';
 import aqp from 'api-query-params';
 import { Permission } from 'src/permissions/Schemas/permission.schema';
 import { Role, RoleDocument } from 'src/roles/Schemas/role.schema';
-import { HR_ROLE, USER_ROLE } from 'src/databases/sample';
+import { HR_ROLE, USER_ROLE, VIP_ROLE } from 'src/databases/sample';
 
 @Injectable()
 export class UsersService {
@@ -279,7 +279,8 @@ export class UsersService {
     }
 
     const currentDate = new Date();
-    
+    const userRole = await this.roleModel.findOne({ name: VIP_ROLE });
+
     // Nếu user đã là VIP và còn hạn, cộng thêm thời gian
     if (user.vipInfo?.isVIP && user.vipInfo.endDate > currentDate) {
       const newEndDate = new Date(user.vipInfo.endDate);
@@ -288,7 +289,7 @@ export class UsersService {
       await this.userModel.updateOne(
         { _id: userId },
         {
-          role: 'VIP',
+          role: userRole?._id,
           vipInfo: {
             isVIP: true,
             startDate: user.vipInfo.startDate, // Giữ ngày bắt đầu cũ
@@ -305,7 +306,7 @@ export class UsersService {
       await this.userModel.updateOne(
         { _id: userId },
         {
-          role: 'VIP',
+          role: userRole?._id,
           vipInfo: {
             isVIP: true,
             startDate: currentDate,

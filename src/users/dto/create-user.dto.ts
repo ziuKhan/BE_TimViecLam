@@ -68,6 +68,7 @@ export class RegisterUserDto {
   @IsEmail({}, { message: 'Email không hợp lệ a@a.a' })
   email: string;
 
+  @IsOptional()
   @IsString()
   avatar: string;
   
