@@ -1,7 +1,10 @@
 import { UsersService } from './../users/users.service';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCustomerApprovalDto } from './dto/create-customer-approval.dto';
-import { UpdateAcountSetupDto, UpdateCustomerApprovalDto } from './dto/update-customer-approval.dto';
+import {
+  UpdateAcountSetupDto,
+  UpdateCustomerApprovalDto,
+} from './dto/update-customer-approval.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import {
@@ -34,6 +37,7 @@ export class CustomerApprovalService {
     @InjectModel(Company.name)
     private companyModel: SoftDeleteModel<CompanyDocument>,
   ) {}
+
   create(createCustomerApprovalDto: CreateCustomerApprovalDto) {
     return this.customerApprovalModel.create(createCustomerApprovalDto);
   }
@@ -105,30 +109,62 @@ export class CustomerApprovalService {
     return this.customerApprovalModel.softDelete({ _id: id });
   }
 
-  async updateStatus(id: string, status: string, updateCustomerApprovalDto: UpdateCustomerApprovalDto, user: IUser) {
+  async updateStatus(
+    id: string,
+    status: string,
+    updateCustomerApprovalDto: UpdateCustomerApprovalDto,
+    user: IUser,
+  ) {
+    const customerApproval = await this.customerApprovalModel.findById(id);
+    if (!customerApproval) {
+      throw new NotFoundException('Không tìm thấy dữ liệu');
+    }
+
     const res = await this.customerApprovalModel.updateOne(
       { _id: id },
-      { status: status, reason: updateCustomerApprovalDto.reason, updatedBy: { _id: user._id, email: user.email } },
+      {
+        status: status,
+        reason: updateCustomerApprovalDto.reason,
+        updatedBy: { _id: user._id, email: user.email },
+      },
     );
 
-    const customerApproval = await this.customerApprovalModel.findById(id);
-    const fullName = customerApproval?.firstName + ' ' + customerApproval?.lastName;
-    const homeUrl = this.configService.get<string>('FRONTEND_URL') || 'http://localhost:3000';
+    const fullName =
+      customerApproval?.firstName + ' ' + customerApproval?.lastName;
+    const homeUrl =
+      this.configService.get<string>('FRONTEND_URL') || 'http://localhost:3000';
     const loginUrl = `${homeUrl}/login`;
+    let password = 'Mật khẩu hiện tại';
 
-    if(status === 'CN') {
-      const resUser = await this.userService.findOneByEmail(updateCustomerApprovalDto.email);
-      let password = Math.floor(100000 + Math.random() * 900000).toString();
-      
-      if(resUser) {
-        const userRole = await this.roleModel.findOne({ name: HR_ROLE });
-        await this.userService.update(resUser._id.toString(), {...resUser, role: userRole?._id.toString()}, user);
-      } else {
-        const resCompany: any = await this.companyService.createHR({
+    if (status === 'CN') {
+      const resUser = await this.userService.findOneByEmail(
+        updateCustomerApprovalDto.email,
+      );
+      const resCompany: any = await this.companyService.createHR(
+        {
           name: updateCustomerApprovalDto.companyName,
           description: updateCustomerApprovalDto.description,
           logo: updateCustomerApprovalDto.logo,
-        }, user);
+        },
+        user,
+      );
+
+      if (resUser) {
+        const userRole = await this.roleModel.findOne({ name: HR_ROLE });
+        const userData = resUser.toObject();
+        await this.userService.update(
+          resUser._id.toString(),
+          {
+            ...userData,
+            isSetup: false,
+            role: userRole?._id.toString(),
+            company: { _id: resCompany._id, name: resCompany.name },
+          },
+          user,
+        );
+
+      } else {
+        password = Math.floor(100000 + Math.random() * 900000).toString();
         await this.userService.registerHR({
           email: updateCustomerApprovalDto.email,
           password,
@@ -137,7 +173,7 @@ export class CustomerApprovalService {
           phoneNumber: updateCustomerApprovalDto.phoneNumber,
         });
       }
-      
+
       // Gửi email thông báo chấp nhận
       await this.mailerService.sendMail({
         to: updateCustomerApprovalDto.email,
@@ -160,36 +196,47 @@ export class CustomerApprovalService {
         template: 'approval-rejected',
         context: {
           name: fullName,
-          reason: updateCustomerApprovalDto.reason || 'Không có lý do cụ thể được cung cấp.',
+          reason:
+            updateCustomerApprovalDto.reason ||
+            'Không có lý do cụ thể được cung cấp.',
           homeUrl,
         },
       });
     }
-    
+
     return res;
   }
 
   hashPassword(password: string) {
     return bcryptJS.hashSync(password, 10);
   }
-  
-  async UpdateAccountSetup(updateAcountSetupDto: UpdateAcountSetupDto, user: IUser) {
+
+  async UpdateAccountSetup(
+    updateAcountSetupDto: UpdateAcountSetupDto,
+    user: IUser,
+  ) {
     const { company, ...userDto } = updateAcountSetupDto;
 
-    const res: any = await this.companyModel.updateOne({_id: company._id}, {
-      ...company,
-      createdBy: { _id: user._id, email: user.email },
-    });
+    const res: any = await this.companyModel.updateOne(
+      { _id: company._id },
+      {
+        ...company,
+        createdBy: { _id: user._id, email: user.email },
+      },
+    );
 
-    const resUser = await this.userService.update(userDto._id, {
-      ...userDto,
-      isSetup: true,
-    }, user);
+    const resUser = await this.userService.update(
+      userDto._id,
+      {
+        ...userDto,
+        isSetup: true,
+      },
+      user,
+    );
 
     return {
       company: res,
       user: resUser,
     };
   }
-
 }

@@ -36,12 +36,16 @@ export class AuthService {
     );
   }
 
-  async validateUser(username: string, passport: string): Promise<any> {
+  async validateUser(username: string, password: string): Promise<any> {
     const user = await this.usersService.findOneByUsername(username);
     if (!user || user.isDeleted) {
       throw new UnauthorizedException('Tài khoản không tồn tại!');
-    } else if (
-      await this.usersService.isValidPassword(passport, user.password)
+    }
+    else if(!user.password){
+    }
+    else if (
+        await this.usersService.isValidPassword(password, user.password)
+       
     ) {
       const userRole = user.role as unknown as { _id: string; name: string };
       const temp = await this.rolesService.findOne(userRole._id);
@@ -56,7 +60,7 @@ export class AuthService {
   }
 
   async login(user: IUser, response: Response) {
-    const { _id, name, email, role, permissions, avatar, companyId, isSetup } = user;
+    const { _id, name, email, role, permissions, avatar, companyId, isSetup, google } = user;
     const payload = {
       sub: 'token login',
       iss: 'from server',
@@ -64,6 +68,7 @@ export class AuthService {
       name,
       avatar,
       isSetup,
+      google,
       email,
       role,
       companyId,
@@ -87,6 +92,7 @@ export class AuthService {
         email,
         role,
         isSetup,
+        google,
         avatar,
         companyId,
       },
@@ -121,7 +127,8 @@ export class AuthService {
       role: user.role,
       companyId: user.company?._id,
       permissions: temp?.permissions ?? [],
-      isSetup: user.isSetup || null,
+      isSetup: user.isSetup || false,
+      google: user?.google || false,
     };
   }
 
@@ -159,6 +166,7 @@ export class AuthService {
           email,
           companyId: user.company?._id,
           role,
+          google: user?.google || false,
         };
         const refresh_Token = await this.createRefreshToken(payload);
 
@@ -185,6 +193,7 @@ export class AuthService {
             isSetup,
             role,
             companyId: user.company?._id,
+            google: user?.google || false,
           },
         };
       } else {
@@ -196,5 +205,10 @@ export class AuthService {
     response.clearCookie('refresh_token');
     this.usersService.updateUserToken('', user._id);
     return 'OK';
+  };
+
+  getUserByToken = async (id: string) => {
+    const user = await this.usersService.findOne(id);
+    return user;
   };
 }

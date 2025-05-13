@@ -27,8 +27,11 @@ export class User {
   @Prop()
   address: string;
 
-  @Prop()
+  @Prop({default: true})
   isActive: boolean;
+
+  @Prop({default: false})
+  google: boolean;
 
   @Prop()
   avatar: string;

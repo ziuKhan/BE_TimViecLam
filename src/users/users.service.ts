@@ -80,7 +80,8 @@ export class UsersService {
       .limit(defaultLimit)
       .sort(sort as any)
       .select('-password')
-      .populate(population) 
+      .populate(population)
+      .populate({ path: 'role', select: { name: 1, _id: 1 } })
       .exec();
 
     return {
@@ -191,6 +192,8 @@ export class UsersService {
       email: googleUser.email,
       googleId: googleUser.googleId,
       avatar: 'avatar_user.svg',
+      google: true,
+      isSetup: false,
       role: userRole?._id,
       isActive: true,
     });

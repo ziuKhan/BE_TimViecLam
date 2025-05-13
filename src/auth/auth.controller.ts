@@ -68,8 +68,18 @@ export class AuthController {
   @ResponseMessage('Get User by access token')
   @Get('/account')
   async getAccount(@User() user: IUser) {
-    delete user.permissions;
-    return user;
+    const userData: any = await this.authService.getUserByToken(user._id);
+    const data = {
+      _id: userData._id,
+      name: userData.name,
+      email: userData.email,
+      role: userData.role,
+      companyId: userData.company?._id,
+      google: userData.google,
+      avatar: userData.avatar,
+      isSetup: userData.isSetup,
+    }
+    return data;
   }
 
   @ResponseMessage('Get User by access token')

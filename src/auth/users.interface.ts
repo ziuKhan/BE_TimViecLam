@@ -8,6 +8,7 @@ export interface IUser {
     name: string;
   };
   isSetup?: boolean;
+  google?: boolean;
   permissions?: {
     apiPath: string;
     method: string;
