@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsArray, IsEnum, IsMongoId, IsNumber, IsObject, IsOptional, IsString } from "class-validator";
+import { IsArray, IsEnum,  IsNumber, IsObject, IsOptional, IsString } from "class-validator";
 import mongoose from "mongoose";
 
 

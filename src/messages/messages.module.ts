@@ -8,6 +8,7 @@ import { MessageSchema } from './schemas/message.schema';
 import { Message } from './schemas/message.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConversationParticipant } from './schemas/conversation-participant.schema';
+import { WebsocketsModule } from '../websockets/websockets.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ConversationParticipant } from './schemas/conversation-participant.sche
       { name: Conversation.name, schema: ConversationSchema },
       { name: ConversationParticipant.name, schema: ConversationParticipantSchema },
     ]),
+    WebsocketsModule
   ],
   controllers: [MessagesController],
   providers: [MessagesService]

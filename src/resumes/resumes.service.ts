@@ -68,6 +68,7 @@ export class ResumesService {
       .populate(population)
       .populate('jobId')
       .populate('companyId')
+      .populate('userId')
       .select(projection as any)
       .exec();
 
