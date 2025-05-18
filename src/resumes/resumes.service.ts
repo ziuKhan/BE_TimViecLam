@@ -87,7 +87,13 @@ export class ResumesService {
     return this.resumeModel
       .findById(id)
       .populate({ path: 'companyId' })
-      .populate({ path: 'jobId' });
+      .populate({
+        path: 'jobId',
+        populate: {
+          path: 'skills',
+          select: 'name',
+        },
+      });
   }
 
   update(id: string, updateResumeDto: UpdateResumeDto, user: IUser) {

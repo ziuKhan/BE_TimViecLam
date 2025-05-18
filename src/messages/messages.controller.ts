@@ -12,7 +12,7 @@ import { CommonQueryDto } from '../dto/common-query.dto';
 export class MessagesController {
   constructor(private readonly messagesService: MessagesService) {}
 
-  @Post('conversation')
+  @Post('conversations')
   @ResponseMessage('Tạo cuộc trò chuyện thành công')
   createConversation(@Body() createConversationDto: CreateConversationDto, @User() user: IUser) {
     return this.messagesService.createConversation(createConversationDto, user);
