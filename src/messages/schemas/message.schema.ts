@@ -17,7 +17,7 @@ export class Message {
 
   @Prop({ type: String, enum: ['text', 'file', 'image', 'system'] })
   contentType: string;
-
+  
   @Prop({ type: String })
   textContent: string;
 

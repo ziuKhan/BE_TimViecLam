@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { MessagesService } from './messages.service';
-import { CreateConversationDto, CreateMessageDto } from './dto/create-message.dto';
+import { CreateConversationDto, CreateMessageDto, CheckOneToOneConversationDto } from './dto/create-message.dto';
 import { MarkAsReadDto, UpdateConversationDto, UpdateMessageDto } from './dto/update-message.dto';
 import { IUser } from 'src/auth/users.interface';
 import { ResponseMessage, User } from '../decorator/customize';
@@ -29,6 +29,12 @@ export class MessagesController {
   @ResponseMessage('Lấy thông tin cuộc trò chuyện thành công')
   getConversation(@Param('id') id: string, @User() user: IUser) {
     return this.messagesService.getConversationById(id, user);
+  }
+
+  @Post('check-one-to-one')
+  @ResponseMessage('Kiểm tra hội thoại 1-1 thành công')
+  checkOneToOneConversation(@Body() checkDto: CheckOneToOneConversationDto, @User() user: IUser) {
+    return this.messagesService.checkOneToOneConversation(checkDto.otherUserId, user);
   }
 
   @Get('conversations/:id/messages')

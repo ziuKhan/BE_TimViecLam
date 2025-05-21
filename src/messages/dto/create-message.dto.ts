@@ -47,3 +47,9 @@ export class CreateConversationDto {
     @IsObject()
     message: CreateMessageDto;
 }
+
+export class CheckOneToOneConversationDto {
+    @IsString()
+    @ApiProperty({ description: 'ID của người dùng khác để kiểm tra hội thoại 1-1' })
+    otherUserId: string;
+}

@@ -11,6 +11,7 @@ import { IUser } from '../auth/users.interface';
 import aqp from 'api-query-params';
 import { WebsocketsService } from '../websockets/websockets.service';
 import { WebsocketsGateway } from '../websockets/websockets.gateway';
+import { User } from '../users/schemas/user.schema';
 
 @Injectable()
 export class MessagesService {
@@ -18,6 +19,7 @@ export class MessagesService {
     @InjectModel(Message.name) private messageModel: SoftDeleteModel<MessageDocument>,
     @InjectModel(Conversation.name) private conversationModel: SoftDeleteModel<ConversationDocument>,
     @InjectModel(ConversationParticipant.name) private conversationParticipantModel: SoftDeleteModel<ConversationParticipantDocument>,
+    @InjectModel(User.name) private userModel: mongoose.Model<User>,
     private readonly websocketGateway: WebsocketsGateway,
   ) {}
 
@@ -73,7 +75,7 @@ export class MessagesService {
       userId: user._id,
       isDeleted: false
     });
-    
+
     const conversationIds = participants.map(p => p.conversationId);
     
     if (search) {
@@ -107,13 +109,36 @@ export class MessagesService {
         p.conversationId.toString() === conversation._id.toString()
       );
       
+      // Tìm tất cả người tham gia trong cuộc trò chuyện
+      const allParticipants = await this.conversationParticipantModel.find({
+        conversationId: conversation._id,
+        isDeleted: false
+      });
+      
+      // Tìm người dùng khác trong cuộc trò chuyện 1:1
+      let otherParticipantInfo = null;
+      if (allParticipants.length === 2) { // Cuộc trò chuyện 1:1
+        const otherParticipant = allParticipants.find(p => 
+          p.userId.toString() !== user._id
+        );
+        
+        if (otherParticipant) {
+          const otherUser = await this.userModel.findById(otherParticipant.userId)
+            .select('name email avatar phoneNumber');
+          
+          otherParticipantInfo = otherUser;
+        }
+      }
+      
       return {
         _id: conversation._id,
         name: conversation.name,
         lastMessage: conversation.lastMessageId,
         createdAt: conversation.createdAt,
         updatedAt: conversation.updatedAt,
-        unreadCount: participant?.unreadCount || 0
+        unreadCount: participant?.unreadCount || 0,
+        participant: participant,
+        otherUser: otherParticipantInfo // Thông tin người dùng khác trong cuộc trò chuyện 1:1
       };
     }));
 
@@ -147,7 +172,12 @@ export class MessagesService {
       .populate({
         path: 'lastMessageId',
         model: Message.name,
-        select: 'textContent contentType senderId createdAt'
+        select: 'textContent contentType senderId createdAt',
+        populate: {
+          path: 'senderId',
+          model: User.name,
+          select: 'name email avatar phoneNumber'
+        }
       });
 
     if (!conversation) {
@@ -158,6 +188,21 @@ export class MessagesService {
       conversationId: id,
       isDeleted: false
     });
+    
+    // Tìm người dùng khác trong cuộc trò chuyện 1:1
+    let otherParticipantInfo = null;
+    if (participants.length === 2) { // Cuộc trò chuyện 1:1
+      const otherParticipant = participants.find(p => 
+        p.userId.toString() !== user._id
+      );
+      
+      if (otherParticipant) {
+        const otherUser = await this.userModel.findById(otherParticipant.userId)
+          .select('name email avatar phoneNumber');
+        
+        otherParticipantInfo = otherUser;
+      }
+    }
 
     return {
       _id: conversation._id,
@@ -166,7 +211,8 @@ export class MessagesService {
       createdAt: conversation.createdAt,
       updatedAt: conversation.updatedAt,
       participantsCount: participants.length,
-      unreadCount: participant.unreadCount
+      unreadCount: participant.unreadCount,
+      otherUser: otherParticipantInfo // Thông tin người dùng khác trong cuộc trò chuyện 1:1
     };
   }
 
@@ -202,6 +248,11 @@ export class MessagesService {
       })
       .sort({ createdAt: -1 })
       .skip(offset)
+      .populate({
+        path: 'senderId',
+        model: User.name,
+        select: 'name email avatar phoneNumber'
+      })
       .limit(defaultLimit);
 
     const result = messages.map(message => ({
@@ -404,5 +455,56 @@ export class MessagesService {
     await this.conversationParticipantModel.softDelete({ conversationId: id });
 
     return { success: true };
+  }
+
+  async checkOneToOneConversation(otherUserId: string, user: IUser) {
+    if (!mongoose.Types.ObjectId.isValid(otherUserId)) {
+      throw new BadRequestException('ID người dùng không hợp lệ');
+    }
+
+    // Kiểm tra người dùng khác có tồn tại không
+    const otherUser = await this.userModel.findById(otherUserId);
+    if (!otherUser) {
+      throw new BadRequestException('Người dùng không tồn tại');
+    }
+
+    // Tìm tất cả các cuộc hội thoại mà người dùng hiện tại tham gia
+    const userParticipations = await this.conversationParticipantModel.find({
+      userId: user._id,
+      isDeleted: false
+    });
+
+    const userConversationIds = userParticipations.map(p => p.conversationId);
+
+    // Tìm tất cả các cuộc hội thoại mà người dùng khác tham gia
+    const otherUserParticipations = await this.conversationParticipantModel.find({
+      userId: otherUserId,
+      conversationId: { $in: userConversationIds },
+      isDeleted: false
+    });
+
+    // Tìm các cuộc hội thoại chung giữa hai người dùng
+    const commonConversationIds = otherUserParticipations.map(p => p.conversationId.toString());
+
+    // Kiểm tra từng cuộc hội thoại chung để tìm cuộc hội thoại 1-1
+    for (const conversationId of commonConversationIds) {
+      const participantsCount = await this.conversationParticipantModel.countDocuments({
+        conversationId,
+        isDeleted: false
+      });
+
+      // Nếu có đúng 2 người tham gia, đây là cuộc hội thoại 1-1
+      if (participantsCount === 2) {
+        return {
+          exists: true,
+          conversationId
+        };
+      }
+    }
+
+    // Không tìm thấy cuộc hội thoại 1-1
+    return {
+      exists: false
+    };
   }
 }

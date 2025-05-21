@@ -9,6 +9,7 @@ import { Message } from './schemas/message.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConversationParticipant } from './schemas/conversation-participant.schema';
 import { WebsocketsModule } from '../websockets/websockets.module';
+import { User, UserSchema } from '../users/schemas/user.schema';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { WebsocketsModule } from '../websockets/websockets.module';
       { name: Message.name, schema: MessageSchema },
       { name: Conversation.name, schema: ConversationSchema },
       { name: ConversationParticipant.name, schema: ConversationParticipantSchema },
+      { name: User.name, schema: UserSchema },
     ]),
     WebsocketsModule
   ],
