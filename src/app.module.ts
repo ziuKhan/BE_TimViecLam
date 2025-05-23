@@ -27,7 +27,6 @@ import { CustomerApprovalModule } from './customer-approval/customer-approval.mo
 import { TransactionsModule } from './transactions/transactions.module';
 import { SubscriptionPackageModule } from './subscription-package/subscription-package.module';
 import { VipHistoryModule } from './vip-history/vip-history.module';
-import { MessagesModule } from './messages/messages.module';
 
 @Module({
   imports: [
@@ -83,7 +82,6 @@ import { MessagesModule } from './messages/messages.module';
 
     VipHistoryModule,
 
-    MessagesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
