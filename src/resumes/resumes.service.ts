@@ -9,6 +9,7 @@ import { IUser } from 'src/auth/users.interface';
 import aqp from 'api-query-params';
 import path from 'path';
 import { JobsService } from '../jobs/jobs.service';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class ResumesService {
@@ -16,8 +17,9 @@ export class ResumesService {
     @InjectModel(Resume.name)
     private resumeModel: SoftDeleteModel<ResumeDocument>,
     private jobService: JobsService,
+    private notificationService: NotificationsService,
   ) {}
-  async create(createUserCVDto: CreateUserCVDto, user: IUser) {
+  async create(createUserCVDto: CreateUserCVDto, user: IUser | any) {
     const resume = await this.resumeModel.create({
       ...createUserCVDto,
       userId: user._id,
@@ -32,7 +34,25 @@ export class ResumesService {
       ],
       createdBy: { _id: user._id, email: user.email },
     });
-     await this.jobService.updateCountResume(resume.jobId.toString());
+    await this.jobService.updateCountResume(resume.jobId.toString());
+    const job = await this.jobService.findOne(resume.jobId.toString());
+    await this.notificationService.create(
+      {
+        title: 'Tạo hồ sơ mới thành công',
+        message: 'Bạn đã gửi hồ sơ ứng tuyển cho công việc: ' + job.name,
+        isGlobal: false,
+        type: 'SUCCESS',
+        userIds: [user._id],
+        objInfo: {
+          _id: resume.jobId.toString(),
+          name: 'CREATE',
+          type: 'RESUME',
+        },
+        isURL: false,
+        url: '',
+      },
+      user,
+    );
     return { _id: resume._id, createAt: resume.createdAt };
   }
 
@@ -46,15 +66,18 @@ export class ResumesService {
       ]);
   }
 
-  async findAll(currentPage: number, limit: number, search: string, qs: string) {
+  async findAll(
+    currentPage: number,
+    limit: number,
+    search: string,
+    qs: string,
+  ) {
     const { filter, sort, population, projection } = aqp(qs);
     let offset = (+currentPage - 1) * +limit;
     let defaultLimit = +limit ? +limit : 10;
 
     if (search) {
-      filter.$or = [
-        { name: { $regex: new RegExp(search), $options: 'i' } },
-      ];
+      filter.$or = [{ name: { $regex: new RegExp(search), $options: 'i' } }];
     }
 
     const totalItems = (await this.resumeModel.find(filter)).length;
@@ -96,10 +119,9 @@ export class ResumesService {
       });
   }
 
-  update(id: string, updateResumeDto: UpdateResumeDto, user: IUser) {
+  async update(id: string, updateResumeDto: UpdateResumeDto, user: IUser | any) {
     if (!mongoose.Types.ObjectId.isValid(id)) return 'Not found';
-
-    return this.resumeModel.updateOne(
+    const res = await this.resumeModel.updateOne(
       { _id: id },
       {
         ...updateResumeDto,
@@ -113,6 +135,37 @@ export class ResumesService {
         updatedBy: { _id: user._id, email: user.email },
       },
     );
+    const renderStatus = (status: string) => {
+      switch (status) {
+        case 'PENDING':
+          return 'ĐANG CHỜ'
+        case 'REVIEWING':
+          return 'ĐANG XEM XÉT'
+        case 'APPROVED':
+          return 'ĐÃ DUYỆT'
+        case 'REJECTED':
+          return 'ĐÃ TỪ CHỐI'
+      }
+    }
+    const job = await this.jobService.findOne(updateResumeDto.jobId.toString());
+    await this.notificationService.create(
+      {
+        title: 'Thông báo trạng thái hồ sơ',
+        message: `Trạng thái hồ sơ ứng tuyển dự án ${job.name} được cập nhật thành: ${renderStatus(updateResumeDto.status)}`,
+        isGlobal: false,
+        type: 'SUCCESS',
+        userIds: [user._id],
+        objInfo: {
+          _id: id,
+          name: 'UPDATE',
+          type: 'RESUME',
+        },
+        isURL: false,
+        url: '',
+      },
+      user,
+    );
+    return res;
   }
 
   remove(id: string, user: IUser) {
