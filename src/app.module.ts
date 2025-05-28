@@ -34,7 +34,7 @@ import { VipHistoryModule } from './vip-history/vip-history.module';
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        uri: configService.get<string>('MONGO_URI'),
+        uri: configService.get<string>('MONGO_URL'),
         connectionFactory: (connection) => {
           connection.plugin(softDeletePlugin);
           return connection;

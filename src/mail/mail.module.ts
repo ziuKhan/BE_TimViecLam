@@ -12,12 +12,14 @@ import {
   SubscriberSchema,
 } from 'src/subscribers/Schemas/subscriber.schema';
 import { Job, JobSchema } from 'src/jobs/Schemas/job.schema';
+import { Skill, SkillSchema } from 'src/skills/Schemas/skill.schema';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: Subscriber.name, schema: SubscriberSchema },
       { name: Job.name, schema: JobSchema },
+      { name: Skill.name, schema: SkillSchema },
     ]),
 
     MailerModule.forRootAsync({

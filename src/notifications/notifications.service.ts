@@ -8,7 +8,7 @@ import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import aqp from 'api-query-params';
 import mongoose, { Model } from 'mongoose';
 import { WebsocketsGateway } from '../websockets/websockets.gateway';
-import { NotificationUser, NotificationUserDocument } from './schemas/notificationUser.schema';
+import { NotificationUser, NotificationUserDocument } from './Schemas/notificationUser.schema';
 @Injectable()
 export class NotificationsService {
   constructor(

@@ -114,6 +114,8 @@ export class UsersService {
    update(id: string, updateUserDto: UpdateUserDto, iUser: IUser) {
     if (updateUserDto.password) {
       updateUserDto.password =  this.hashPassword(updateUserDto.password);
+    } else {
+      delete updateUserDto.password;
     }
 
     return this.userModel.updateOne(

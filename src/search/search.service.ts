@@ -17,10 +17,16 @@ export class SearchService {
     private skillModel: SoftDeleteModel<SkillDocument>,
   ) {}
 
+  // Hàm escape regex characters
+  private escapeRegExp(string: string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
   async suggest(currentPage: number, limit: number, search: string, qs: any) {
     const { filter, sort, population, projection } = aqp(qs);
 
-    const regex = new RegExp(search, 'i');
+    const escapedSearch = this.escapeRegExp(search);
+    const regex = new RegExp(escapedSearch, 'i');
     const skip = (currentPage - 1) * limit;
 
     // Thực hiện các truy vấn đồng thời
@@ -84,20 +90,24 @@ export class SearchService {
     let defaultLimit = +limit ? +limit : 10;
 
     if (search) {
+        // Escape các ký tự đặc biệt trong tìm kiếm
+        const escapedSearch = this.escapeRegExp(search);
+        const searchRegex = new RegExp(escapedSearch, 'i');
+
         // Tìm công ty theo tên
         const companies = await this.companyModel.find({
-            name: { $regex: new RegExp(search), $options: 'i' },
+            name: { $regex: searchRegex },
         });
         const companyIds = companies.map(company => company._id);
 
         // Tìm kỹ năng theo tên
         const skills = await this.skillModel.find({
-            name: { $regex: new RegExp(search), $options: 'i' },
+            name: { $regex: searchRegex },
         });
         const skillIds = skills.map(skill => skill._id);
 
         filter.$or = [
-            { name: { $regex: new RegExp(search), $options: 'i' } }, // Tìm theo tên job
+            { name: { $regex: searchRegex } }, // Tìm theo tên job
             { companyId: { $in: companyIds } }, // Tìm theo tên công ty
             { skills: { $in: skillIds } }, // Tìm theo tên kỹ năng
         ];

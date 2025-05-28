@@ -14,6 +14,6 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     if (user) {
       return user;
     }
-    throw new BadRequestException('Username/Password không đúng!');
+    throw new BadRequestException('Tài khoản hoặc mật khẩu không đúng!');
   }
 }
