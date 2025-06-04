@@ -1,5 +1,5 @@
 import { UsersService } from './../users/users.service';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCustomerApprovalDto } from './dto/create-customer-approval.dto';
 import {
   UpdateAcountSetupDto,
@@ -38,7 +38,16 @@ export class CustomerApprovalService {
     private companyModel: SoftDeleteModel<CompanyDocument>,
   ) {}
 
-  create(createCustomerApprovalDto: CreateCustomerApprovalDto) {
+  async create(createCustomerApprovalDto: CreateCustomerApprovalDto) {
+    const detail = await this.customerApprovalModel.findOne({
+      $or: [
+        {taxCode: createCustomerApprovalDto.taxCode},
+        {companyName: createCustomerApprovalDto.companyName}
+      ]
+    });
+    if(detail) {
+      throw new BadRequestException('Mã số thuế hoặc tên công ty đã tồn tại trong danh sách đăng ký');
+    }
     return this.customerApprovalModel.create(createCustomerApprovalDto);
   }
 
@@ -152,6 +161,7 @@ export class CustomerApprovalService {
       if (resUser) {
         const userRole = await this.roleModel.findOne({ name: HR_ROLE });
         const userData = resUser.toObject();
+        delete userData.password;
         await this.userService.update(
           resUser._id.toString(),
           {

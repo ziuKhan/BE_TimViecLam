@@ -6,12 +6,15 @@ import { SubscriptionPackage, SubscriptionPackageDocument } from './schemas/subs
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { IUser } from '../auth/users.interface';
 import aqp from 'api-query-params';
+import { Transaction, TransactionDocument } from '../transactions/schemas/transaction.schema';
 
 @Injectable()
 export class SubscriptionPackageService {
   constructor(
     @InjectModel(SubscriptionPackage.name)
-    private subscriptionPackageModel: SoftDeleteModel<SubscriptionPackageDocument>
+    private subscriptionPackageModel: SoftDeleteModel<SubscriptionPackageDocument>,
+    @InjectModel(Transaction.name)
+    private transactionModel: SoftDeleteModel<TransactionDocument>
   ) {}
 
   async create(createSubscriptionPackageDto: CreateSubscriptionPackageDto, user: IUser) {
@@ -36,7 +39,15 @@ export class SubscriptionPackageService {
     return newPackage;
   }
 
-  async findAll(currentPage: number, limit: number,search: string, qs: string) {
+  async findAll(currentPage: number, limit: number, search: string, qs: string): Promise<{
+    meta: {
+      current: number;
+      pageSize: number;
+      pages: number;
+      total: number;
+    };
+    result: any[];
+  }> {
     const { filter, sort, projection, population } = aqp(qs);
 
     delete filter.current;
@@ -54,7 +65,7 @@ export class SubscriptionPackageService {
     const totalItems = (await this.subscriptionPackageModel.find(filter)).length;
     const totalPages = Math.ceil(totalItems / defaultLimit);
 
-    const result = await this.subscriptionPackageModel
+    const subscriptionPackages = await this.subscriptionPackageModel
       .find(filter)
       .skip(offset)
       .limit(defaultLimit)
@@ -62,6 +73,22 @@ export class SubscriptionPackageService {
       .select(projection)
       .populate(population)
       .exec();
+
+    // Sử dụng Promise.all để đợi tất cả các promise hoàn thành
+    const result = await Promise.all(
+      subscriptionPackages.map(async (item) => {
+        const transactions = await this.transactionModel.find({
+          packageId: item._id
+        });
+        // Chuyển đổi mongoose document thành plain object
+        const plainItem = item.toObject();
+        return {
+          ...plainItem,
+          transactions: transactions,
+          totalTransactions: transactions.length || 0
+        };
+      })
+    );
 
     return {
       meta: {

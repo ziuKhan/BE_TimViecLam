@@ -78,6 +78,7 @@ export class CustomerApprovalController {
   ) {
     return this.customerApprovalService.updateStatus(id, status, updateCustomerApprovalDto, user);
   }
+  
   @ResponseMessage('Update account setup successfully')
   @Post('/setup')
   updateSetup(@Body() updateAcountSetupDto: UpdateAcountSetupDto, @User() user: IUser) {

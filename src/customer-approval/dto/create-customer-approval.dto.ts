@@ -13,6 +13,9 @@ export class CreateCustomerApprovalDto {
   @IsEmail({}, { message: 'Email không hợp lệ' })
   email: string;
 
+  @IsNotEmpty({ message: 'Mã số thuế không được để trống' })
+  taxCode: string;
+
   @IsNotEmpty({ message: 'Số điện thoại không được để trống' })
   phoneNumber: string;
 

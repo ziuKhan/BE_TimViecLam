@@ -154,7 +154,7 @@ export class ResumesService {
         message: `Trạng thái hồ sơ ứng tuyển dự án ${job.name} được cập nhật thành: ${renderStatus(updateResumeDto.status)}`,
         isGlobal: false,
         type: 'SUCCESS',
-        userIds: [user._id],
+        userIds: [updateResumeDto.userId],
         objInfo: {
           _id: id,
           name: 'UPDATE',

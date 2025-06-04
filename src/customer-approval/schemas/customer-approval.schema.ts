@@ -17,8 +17,10 @@ export class CustomerApproval {
   logo: string;
   @Prop()
   address: string;
-  @Prop({unique: true})
+  @Prop()
   companyName: string;
+  @Prop({unique: true})
+  taxCode: string;
   @Prop({default: 'CD'})
   status: string;
   @Prop()
