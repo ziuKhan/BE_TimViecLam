@@ -5,12 +5,14 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Resume, ResumeSchema } from './schemas/resume.schema';
 import { JobsModule } from '../jobs/jobs.module';
 import { NotificationsModule } from '../notifications/notifications.module';
+import { MailModule } from '../mail/mail.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Resume.name, schema: ResumeSchema }]),
     JobsModule,
     NotificationsModule,
+    MailModule,
   ],
   controllers: [ResumesController],
   providers: [ResumesService],

@@ -29,6 +29,9 @@ export class Resume {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: Job.name })
   jobId: mongoose.Schema.Types.ObjectId;
 
+  @Prop()
+  reason?: string;
+
   @Prop({
     type: mongoose.Schema.Types.Array,
   })

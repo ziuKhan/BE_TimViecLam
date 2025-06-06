@@ -1,0 +1,113 @@
+<html>
+
+  <head>
+    <title>ITViec - Hồ sơ được phê duyệt</title>
+    <meta charset='UTF-8' />
+  </head>
+
+  <body
+    style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';"
+  >
+    <table
+      style='max-width: 80rem; min-height: 100vh; padding: 2rem; margin: 0 auto; background-color: #f5f5f5;'
+    >
+      <tr>
+        <td align='center'>
+          <table
+            style='background-color: white; border-radius: 5px; padding: 20px;'
+          >
+            <tr>
+              <td>
+                <div style='text-align: left; font-size: 20px;'>ITViec</div>
+              </td>
+              <td>
+                <div style='text-align: right; font-size: 20px;'>Ít nhưng mà
+                  chất</div>
+              </td>
+            </tr>
+            <tr>
+              <td
+                colspan='2'
+                style='margin: 15px 0; border-top: 1px solid rgba(5, 5, 5, 0.06);'
+              ></td>
+            </tr>
+            <tr>
+              <td colspan='2'>
+                <div style='text-align: center;'>
+                  <div style='font-size: 24px; color: #28a745; font-weight: bold; margin-bottom: 15px;'>Chúc mừng!</div>
+                  <div style='font-size: 18px; font-weight: bold; margin-bottom: 10px;'>Hồ sơ của bạn đã được phê duyệt</div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td colspan='2'>
+                <div style='text-align: left; margin-top: 20px;'>
+                  <div style='font-size: 16px;'>Xin chào {{userName}},</div>
+                  <div style='font-size: 16px; margin-top: 10px;'>
+                    Chúng tôi vui mừng thông báo rằng hồ sơ ứng tuyển của bạn cho vị trí <strong>{{jobName}}</strong> tại <strong>{{companyName}}</strong> đã được phê duyệt. 
+                    Nhà tuyển dụng đã xem xét hồ sơ của bạn và đánh giá cao kỹ năng cũng như kinh nghiệm của bạn.
+                  </div>
+                  
+                  {{#if reason}}
+                  <div style='font-size: 16px; margin-top: 15px;'>
+                    <strong>Phản hồi từ nhà tuyển dụng:</strong>
+                    <div style='padding: 10px; background-color: #f8f9fa; border-left: 4px solid #28a745; margin-top: 5px;'>
+                      {{reason}}
+                    </div>
+                  </div>
+                  {{/if}}
+                  
+                  <div style='font-size: 16px; margin-top: 15px;'>
+                    Nhà tuyển dụng sẽ liên hệ với bạn trong thời gian sớm nhất để sắp xếp các bước tiếp theo trong quá trình tuyển dụng.
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td
+                colspan='2'
+                style='margin: 20px 0; border-top: 1px dashed rgba(5, 5, 5, 0.06);'
+              ></td>
+            </tr>
+            <tr>
+              <td colspan='2' style='text-align: center;'>
+                <a
+                  href='http://localhost:5000/user/resumes'
+                  target='_blank'
+                  style='display: inline-block; width: 100%; height: 40px; line-height: 40px; cursor: pointer; border-radius: 5px; background-color: #28a745; color: white; border: none; outline: none; text-decoration: none; font-size: 16px;'
+                >
+                  Xem hồ sơ ứng tuyển của bạn
+                </a>
+              </td>
+            </tr>
+            <tr>
+              <td colspan='2'>
+                <div
+                  style='padding-top: 20px; text-align: left; font-size: 16px;'
+                >Trân trọng,</div>
+                <div style='text-align: left; font-size: 16px;'>Đội ngũ ITViec</div>
+              </td>
+            </tr>
+            <tr>
+              <td colspan='2'>
+                <div style='margin-top: 20px; font-size: 14px; color: #333; text-align: left;'>
+                  <strong>Thông tin chi tiết:</strong>
+                  <ul style="list-style-type: none; padding-left: 0; margin-top: 5px;">
+                    <li>Người ứng tuyển: {{userName}}</li>
+                    <li>Email: {{email}}</li>
+                    <li>Vị trí ứng tuyển: {{jobName}}</li>
+                    <li>Công ty: {{companyName}}</li>
+                  </ul>
+                </div>
+                <div style='margin-top: 20px; font-size: 12px; color: #6c757d; text-align: center;'>
+                  Email này được gửi tự động, vui lòng không trả lời. Nếu bạn cần hỗ trợ, vui lòng liên hệ <a href="mailto:support@itviec.com" style="color: #ea1e30;">support@itviec.com</a>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+
+</html> 

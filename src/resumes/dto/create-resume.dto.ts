@@ -25,6 +25,10 @@ export class CreateResumeDto {
   @IsNotEmpty({ message: 'Vui lòng điền jobId' })
   @IsMongoId({ message: 'Không đúng định dạng ID' })
   jobId: mongoose.Schema.Types.ObjectId;
+
+  @IsOptional()
+  @IsString()
+  reason?: string;
 }
 
 export class CreateUserCVDto {
