@@ -366,7 +366,7 @@ export class StatisticsService {
       {
         $match: {
           createdAt: { $gte: startDate, $lte: endDate },
-          status: 'SUCCESSFUL',
+          status: 'PAID',
           isDeleted: { $ne: true },
         },
       },
@@ -389,7 +389,7 @@ export class StatisticsService {
       {
         $match: {
           createdAt: { $gte: startDate, $lte: endDate },
-          status: 'SUCCESSFUL',
+          status: 'PAID',
           isDeleted: { $ne: true },
         },
       },
