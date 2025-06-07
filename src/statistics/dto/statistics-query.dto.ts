@@ -1,4 +1,4 @@
-import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsOptional, IsString, IsNumber } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export enum StatisticsTimeUnit {
@@ -21,4 +21,10 @@ export class StatisticsQueryDto {
   @IsOptional()
   @IsString()
   endDate?: string;
+}
+
+export class TaxStatisticsQueryDto {
+  @IsNumber()
+  @Transform(({ value }) => parseInt(value))
+  year: number;
 } 

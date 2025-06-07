@@ -72,7 +72,6 @@ export class JobsService {
     }
     return this.JobModel.findById(id).populate({
       path: 'companyId',
-      select: { name: 1, _id: 1, logo: 1 },
     }).populate('skills');
   }
 

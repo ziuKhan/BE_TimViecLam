@@ -2,35 +2,17 @@ import { StatisticsTimeUnit } from '../dto/statistics-query.dto';
 
 export class DateHelper {
   /**
-   * Tạo điểm bắt đầu và kết thúc dựa trên đơn vị thời gian và ngày được chỉ định
+   * Tạo điểm bắt đầu và kết thúc dựa trên đơn vị thời gian
    * @param timeUnit Đơn vị thời gian (năm, tháng, tuần, ngày)
-   * @param startDateStr Ngày bắt đầu (tùy chọn)
-   * @param endDateStr Ngày kết thúc (tùy chọn) 
    */
   static getDateRange(
     timeUnit: StatisticsTimeUnit = StatisticsTimeUnit.MONTH,
-    startDateStr?: string,
-    endDateStr?: string,
   ): { startDate: Date; endDate: Date } {
     const now = new Date();
     let startDate: Date;
-    let endDate: Date = new Date(now); // Đảm bảo đây là bản sao của now
+    let endDate: Date = new Date(now); // Thời gian hiện tại
 
-    // Nếu cung cấp ngày bắt đầu và kết thúc, sử dụng chúng
-    if (startDateStr && endDateStr) {
-      startDate = new Date(startDateStr);
-      endDate = new Date(endDateStr);
-      
-      // Kiểm tra nếu ngày kết thúc trong tương lai, sử dụng ngày hiện tại
-      if (endDate > now) {
-        endDate = new Date(now);
-      }
-      
-      endDate.setHours(23, 59, 59, 999); // Đặt thời gian kết thúc vào cuối ngày
-      return { startDate, endDate };
-    }
-
-    // Mặc định là thời gian hiện tại
+    // Thiết lập thời gian dựa trên đơn vị thời gian
     switch (timeUnit) {
       case StatisticsTimeUnit.YEAR:
         // Từ đầu năm đến hiện tại
@@ -38,12 +20,17 @@ export class DateHelper {
         break;
       
       case StatisticsTimeUnit.MONTH:
-        // Từ đầu tháng đến hiện tại
-        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        // Từ đầu năm đến hiện tại để xem dữ liệu các tháng
+        startDate = new Date(now.getFullYear(), 0, 1);
         break;
       
       case StatisticsTimeUnit.WEEK:
-        // Từ đầu tuần đến hiện tại (đầu tuần là Thứ Hai)
+ // Từ đầu tháng đến hiện tại
+ startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        break;
+      
+      case StatisticsTimeUnit.DAY:
+        // Ngày hiện tại
         const dayOfWeek = now.getDay();
         const diff = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Điều chỉnh cho Chủ Nhật
         startDate = new Date(now);
@@ -51,15 +38,13 @@ export class DateHelper {
         startDate.setHours(0, 0, 0, 0);
         break;
       
-      case StatisticsTimeUnit.DAY:
-        // Ngày hiện tại
-        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        break;
-      
       default:
-        // Mặc định là tháng hiện tại
-        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        // Mặc định là từ đầu năm
+        startDate = new Date(now.getFullYear(), 0, 1);
     }
+
+    // Đặt thời gian kết thúc vào cuối ngày hiện tại
+    endDate.setHours(23, 59, 59, 999);
 
     return { startDate, endDate };
   }
@@ -124,7 +109,8 @@ export class DateHelper {
           labels.push(year.toString());
           
           const foundItem = result.find(item => item._id?.year === year);
-          data.push(foundItem ? (foundItem.count || foundItem.totalRevenue || 0) : 0);
+          // Ưu tiên lấy totalRevenue trước nếu có
+          data.push(foundItem ? (foundItem.totalRevenue !== undefined ? foundItem.totalRevenue : foundItem.count || 0) : 0);
         }
         break;
       
@@ -137,7 +123,8 @@ export class DateHelper {
           const foundItem = result.find(item => 
             item._id?.year === currentYear && item._id?.month === i + 1
           );
-          data.push(foundItem ? (foundItem.count || foundItem.totalRevenue || 0) : 0);
+          // Ưu tiên lấy totalRevenue trước nếu có
+          data.push(foundItem ? (foundItem.totalRevenue !== undefined ? foundItem.totalRevenue : foundItem.count || 0) : 0);
         }
         break;
       
@@ -164,7 +151,8 @@ export class DateHelper {
           const foundItem = result.find(item => 
             item._id?.year === targetYear && item._id?.week === targetWeek
           );
-          data.push(foundItem ? (foundItem.count || foundItem.totalRevenue || 0) : 0);
+          // Ưu tiên lấy totalRevenue trước nếu có
+          data.push(foundItem ? (foundItem.totalRevenue !== undefined ? foundItem.totalRevenue : foundItem.count || 0) : 0);
         }
         break;
       
@@ -183,7 +171,8 @@ export class DateHelper {
             item._id?.month === date.getMonth() + 1 && 
             item._id?.day === date.getDate()
           );
-          data.push(foundItem ? (foundItem.count || foundItem.totalRevenue || 0) : 0);
+          // Ưu tiên lấy totalRevenue trước nếu có
+          data.push(foundItem ? (foundItem.totalRevenue !== undefined ? foundItem.totalRevenue : foundItem.count || 0) : 0);
         }
         break;
       
@@ -195,7 +184,8 @@ export class DateHelper {
           const foundItem = result.find(item => 
             item._id?.year === now.getFullYear() && item._id?.month === i + 1
           );
-          data.push(foundItem ? (foundItem.count || foundItem.totalRevenue || 0) : 0);
+          // Ưu tiên lấy totalRevenue trước nếu có
+          data.push(foundItem ? (foundItem.totalRevenue !== undefined ? foundItem.totalRevenue : foundItem.count || 0) : 0);
         }
     }
 

@@ -46,6 +46,9 @@ export class TransactionsService {
         ...createTransactionDto,
         orderCode,
         user: user._id,
+        amountAfterTax: createTransactionDto.amount * 0.9,
+        tax: createTransactionDto.amount * 0.1,
+        taxPercentage: 10,
         createdBy: {
           _id: user._id,
           email: user.email

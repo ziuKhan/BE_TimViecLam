@@ -14,9 +14,23 @@ export class Transaction {
   @Prop({ unique: true })
   orderCode: number;
 
+  //Tổng tiền
   @Prop()
   amount: number;
 
+  //TIền sau khi trừ thuế
+  @Prop()
+  amountAfterTax: number;
+
+  //Thuế
+  @Prop()
+  tax: number;
+
+  //phần trăm thuế
+  @Prop()
+  taxPercentage: number;
+
+  //mô tả
   @Prop()
   description: string;
 

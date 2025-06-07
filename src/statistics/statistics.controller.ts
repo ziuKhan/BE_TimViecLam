@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { StatisticsService } from './statistics.service';
 import { Public, ResponseMessage } from '../decorator/customize';
-import { StatisticsQueryDto } from './dto/statistics-query.dto';
+import { StatisticsQueryDto, TaxStatisticsQueryDto } from './dto/statistics-query.dto';
 import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Statistics')
@@ -42,5 +42,13 @@ export class StatisticsController {
   @Public()
   getRevenueStatistics(@Query() query: StatisticsQueryDto) {
     return this.statisticsService.getRevenueStatistics(query);
+  }
+
+  @Get('tax')
+  @ResponseMessage('Thống kê thuế và doanh thu theo quý')
+  @Public()
+  @ApiQuery({ name: 'year', type: Number, required: true, example: 2024 })
+  getTaxStatistics(@Query() query: TaxStatisticsQueryDto) {
+    return this.statisticsService.getTaxStatistics(query);
   }
 }
