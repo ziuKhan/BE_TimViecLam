@@ -12,6 +12,7 @@ import { IUser } from '../auth/users.interface';
 import { VipHistoryService } from '../vip-history/vip-history.service';
 import { SubscriptionPackageService } from '../subscription-package/subscription-package.service';
 import { UsersService } from '../users/users.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class TransactionsService {
@@ -19,14 +20,15 @@ export class TransactionsService {
   constructor(
     @InjectModel(Transaction.name)
     private transactionModel: SoftDeleteModel<TransactionDocument>,
+    private configService: ConfigService,
     private vipHistoryService: VipHistoryService,
     private subscriptionPackageService: SubscriptionPackageService,
     private usersService: UsersService
   ) {
     this.payos = new PayOS(
-      '9ee20970-bc51-4380-88b7-0f5253cfbd78',
-      'a6a720f7-fb58-4de5-9946-883b171f6fc9',
-      '695538773d8fdda48612939fd5d4ea524c289a4ae3e3aaab68c8860d16697d1a',
+      this.configService.get<string>('PAY_CLIENT_ID'),
+      this.configService.get<string>('PAY_API_KEY'),
+      this.configService.get<string>('PAY_CHECKSUM_KEY'),
     );
   }
 
