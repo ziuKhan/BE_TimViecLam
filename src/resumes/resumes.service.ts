@@ -129,16 +129,16 @@ export class ResumesService {
   ) {
     if (!mongoose.Types.ObjectId.isValid(id)) return 'Not found';
     const resume = await this.resumeModel
-    .findById(id)
-    .populate({ path: 'companyId' })
-    .populate({ path: 'userId' })
-    .populate({
-      path: 'jobId',
-      populate: {
-        path: 'skills',
-        select: 'name',
-      },
-    });
+      .findById(id)
+      .populate({ path: 'companyId' })
+      .populate({ path: 'userId' })
+      .populate({
+        path: 'jobId',
+        populate: {
+          path: 'skills',
+          select: 'name',
+        },
+      });
     if (!resume) {
       throw new BadRequestException('Hồ sơ không tồn tại');
     }
@@ -197,9 +197,18 @@ export class ResumesService {
         template: 'resume-rejected',
         context: {
           reason: updateResumeDto.reason,
-          userName: resume.userId && 'name' in resume.userId ? resume.userId.name : 'Ứng viên',
-          jobName: resume.jobId && 'name' in resume.jobId ? resume.jobId.name : 'Vị trí ứng tuyển',
-          companyName: resume.companyId && 'name' in resume.companyId ? resume.companyId.name : 'Công ty',
+          userName:
+            resume.userId && 'name' in resume.userId
+              ? resume.userId.name
+              : 'Ứng viên',
+          jobName:
+            resume.jobId && 'name' in resume.jobId
+              ? resume.jobId.name
+              : 'Vị trí ứng tuyển',
+          companyName:
+            resume.companyId && 'name' in resume.companyId
+              ? resume.companyId.name
+              : 'Công ty',
           email: resume.email,
         },
       });
@@ -211,9 +220,18 @@ export class ResumesService {
         template: 'resume-approved',
         context: {
           reason: updateResumeDto.reason,
-          userName: resume.userId && 'name' in resume.userId ? resume.userId.name : 'Ứng viên',
-          jobName: resume.jobId && 'name' in resume.jobId ? resume.jobId.name : 'Vị trí ứng tuyển',
-          companyName: resume.companyId && 'name' in resume.companyId ? resume.companyId.name : 'Công ty',
+          userName:
+            resume.userId && 'name' in resume.userId
+              ? resume.userId.name
+              : 'Ứng viên',
+          jobName:
+            resume.jobId && 'name' in resume.jobId
+              ? resume.jobId.name
+              : 'Vị trí ứng tuyển',
+          companyName:
+            resume.companyId && 'name' in resume.companyId
+              ? resume.companyId.name
+              : 'Công ty',
           email: resume.email,
         },
       });

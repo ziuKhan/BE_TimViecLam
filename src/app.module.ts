@@ -27,10 +27,14 @@ import { CustomerApprovalModule } from './customer-approval/customer-approval.mo
 import { TransactionsModule } from './transactions/transactions.module';
 import { SubscriptionPackageModule } from './subscription-package/subscription-package.module';
 import { VipHistoryModule } from './vip-history/vip-history.module';
+import path from 'path';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: path.resolve(__dirname, '..', '.env'),
+    }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
